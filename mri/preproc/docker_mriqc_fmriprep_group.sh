@@ -9,8 +9,6 @@ run_mriqc=$1
 run_fmriprep=$2
 
 # define where the data is
-#data_dir=~/Data/fMRI/pilot_classification/
-#data_dir=/Volumes/Serengeti/tmpDir
 data_dir=/media/sf_data/fMRI/timePath/
 
 echo "Input data directory: $data_dir"
