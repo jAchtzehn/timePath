@@ -1,0 +1,26 @@
+- standard contrasts
+
+cont01 = ['trial-avg', 'T', condition_names, [0.25, 0.25, 0.25, 0.25, 0, 0]]
+cont02 = ['time', 'T', condition_names, [1, 0, 0, 0, 0, 0]]
+cont03 = ['dist', 'T', condition_names, [0, 1, 0, 0, 0, 0]]
+cont04 = ['lumin', 'T', condition_names, [0, 0, 1, 0, 0, 0]]
+cont05 = ['dots', 'T', condition_names, [0, 0, 0, 1, 0, 0]]
+
+cont06 = ['TDD>lumin', 'T', condition_names, [1/3., 1/3., -1, 1/3., 0, 0]]
+cont07 = ['time>lumin', 'T', condition_names, [1, 0 , -1, 0, 0, 0]]
+cont08 = ['dist>lumin', 'T', condition_names, [0, 1 , -1, 0, 0, 0]]
+cont09 = ['dots>lumin', 'T', condition_names, [0, 0 , -1, 1, 0, 0]]
+
+cont10 = ['time>dist', 'T', condition_names, [1, -1, 0, 0, 0, 0]]
+cont11 = ['time>dots', 'T', condition_names, [1, 0, 0, -1, 0, 0]]
+cont12 = ['dist>dots', 'T', condition_names, [0, 1, 0, -1, 0, 0]]
+
+cont13 = ['icon', 'T', condition_names, [0, 0, 0, 0, 1, 0]]
+cont14 = ['comp', 'T', condition_names, [0, 0, 0, 0, 0, 1]]
+
+
+cont01 = ['time_gt_rest', 'T', condition_names, [2, -1, 0, -1, 0, 0]]
+cont02 = ['dist_gt_rest', 'T', condition_names, [-1, 2, 0, -1, 0, 0]]
+cont03 = ['dots_gt_rest', 'T', condition_names, [-1, -1, 0, 2, 0, 0]]
+
+cont04 = ['time_dist_gt_lumin', 'T', condition_names, [1, 1, -2, 0, 0, 0]]
