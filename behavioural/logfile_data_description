@@ -1,0 +1,22 @@
+# 0. time stamp
+# 1. event number
+# 2. event description
+# 3. subjects number
+# 4. session number
+# 5. block number
+# 6. trial number
+# 7. task type   (0=time, 1=distance, 2=magnitude, 3=contrast/control)
+# 8. standard time (intended duration of movement) [seconds]
+# 9. standard distance (intended distance of movement) [virtual meters]
+# 10. standard dot amount (intended amount of dots during movement)
+# 11. standard contrast [rgb difference between background color and contSquare]
+# 12. actual duration of movement [seconds]
+# 13. actual distance of movement [virtual meters]
+# 14. actual amount of dots during movement
+# 15. presented comparison ([sec] in time task, [meters] in distance task, dot number in magnitude task, contrast/darkness in control task)
+# 16. reaction time [seconds]
+# 17. response (1="standard was less than presented comparison", 2="standard was more than presented comparison")
+
+speed "mid": 4.104166666666667	
+speed "high": 7.035714285714286
+speed "low": 2.3958333333333335
