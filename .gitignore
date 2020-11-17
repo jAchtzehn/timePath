@@ -41,3 +41,5 @@ Temporary Items
 # Python
 *.py[cod]
 *$py.class
+*.pyc
+__pycache__
