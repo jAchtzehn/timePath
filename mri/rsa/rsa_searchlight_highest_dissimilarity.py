@@ -21,15 +21,15 @@ from utilFunctions import create_html_report
 if platform == 'darwin':
     experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath/')
 else:
-    experiment_dir = abspath('/mnt/work/achtzehnj/data/')
+    experiment_dir = abspath('/home/achtzehnj/data/timePath/')
 
-nilearn_dir = opj(experiment_dir, 'nilearn')
-rsa_dir = opj(experiment_dir, 'rsa')
+nilearn_dir = opj(experiment_dir, 'derivatives', 'nilearn')
+rsa_dir = opj(experiment_dir, 'derivatives', 'rsa')
 
 os.system('mkdir -p %s' % rsa_dir)                 # create the mvpa2 folder for data storage
 
 # ------------ options ------------
-subjects = [1]     # subjects to calculate
+subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]     # subjects to calculate
 # [4, 6, 7, 9, 12, 14, 17, 19, 23, 24]                                                      # 10 best subjects (TSNR >= 50)
 # [1, 2, 3, 5, 8, 10, 11, 13, 15, 16, 18, 20, 21, 22, 25]                                   # the rest
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]  # all except 15

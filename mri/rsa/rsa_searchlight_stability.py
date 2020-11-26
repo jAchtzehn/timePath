@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import numpy as np
 from nilearn.plotting import plot_stat_map
-from nilearn.image import coord_transform
+from nilearn.image.resampling import coord_transform
 from utilFunctions import create_html_report
 import cPickle
 
@@ -22,7 +22,7 @@ import cPickle
 if platform == 'darwin':
     experiment_dir = abspath('/Volumes/Seagate/Backups/16102020/data/timePath')
 else:
-    experiment_dir = abspath('/media/sf_data/fMRI/timePath/')
+    experiment_dir = abspath('/home/achtzehnj/data/timePath/')
 
 nilearn_dir = opj(experiment_dir, 'derivatives', 'nilearn')
 rsa_dir = opj(experiment_dir, 'derivatives', 'rsa')
@@ -35,8 +35,9 @@ subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 2
 # [1, 2, 3, 5, 8, 10, 11, 13, 15, 16, 18, 20, 21, 22, 25]                                               # the rest
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]               # all except 15
 conditions = ['time', 'dist', 'dots']
-masks = ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
-# ['all', 'hc', 'ips', 'ifg', 'brain']
+masks = ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'hc_lh', 'hc_rh', 'insula_lh', 'insula_rh']
+# ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'hc_lh', 'hc_rh', 'insula_lh', 'insula_rh']
+# ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
 file_suffix = ''
 plot_html = True
 group_level = True
@@ -90,7 +91,7 @@ for space in spaces:
                 mask_path = opj(nilearn_dir, subj_str, 'space-' + space, 'masks',
                                     subj_str + '_' + roi + '_mask_binarized.nii.gz')  # mask filename
 
-            anat_path = opj(experiment_dir, 'templates', 'mni_1mm', '1mm_T1.nii.gz')
+            anat_path = opj(experiment_dir, 'derivatives', 'templates', 'mni_1mm', '1mm_T1.nii.gz')
             
             # read in behav data
             behav_data = pd.read_csv(behav_path, delimiter='\t')
@@ -121,7 +122,7 @@ for space in spaces:
             mtds = mtgs(fmri_data)
             dsm = rsa.PDist(square=False, center_data=True)
             
-            sl = sphere_searchlight(dsm, radius=sl_radius, nproc=8)
+            sl = sphere_searchlight(dsm, radius=sl_radius, nproc=24)
             slres = sl(mtds)
             
             # now compute RDM consistency by cross-validation with chunks
@@ -129,7 +130,7 @@ for space in spaces:
             mtcds = mtcgs(fmri_data)
             dscm = rsa.PDistConsistency(center_data=True)
             
-            sl_stab = sphere_searchlight(dscm, radius=sl_radius, nproc=8)
+            sl_stab = sphere_searchlight(dscm, radius=sl_radius, nproc=24)
             slres_stab = sl_stab(mtcds)
             mean_consistency = np.mean(slres_stab, axis=0)
             
@@ -166,24 +167,32 @@ for space in spaces:
             ax[0].set_title('Location of most stable pattern')
             
             # plot RDM
-            rdm_data = squareform(slres.samples[:, mean_consistency.argmax()])
+            # reformat so that the matrix has the order time-space-numerosity
+            rdm_data_ns = np.zeros(shape=3)
+            rdm_max_cons = slres.samples[:, mean_consistency.argmax()]
+            rdm_data_ns[0] = rdm_max_cons[1]
+            rdm_data_ns[1] = rdm_max_cons[2]
+            rdm_data_ns[2] = rdm_max_cons[0]
+            #rdm_data = squareform(slres.samples[:, mean_consistency.argmax()])
+            rdm_data = squareform(rdm_data_ns)
             rdm_plot = ax[1].imshow(rdm_data, interpolation='nearest')
             div = make_axes_locatable(ax[1])
             cax = div.append_axes("right", size="5%", pad=0.2)
             cbar = plt.colorbar(rdm_plot, cax=cax)
             rdm_plot.set_clim(vmin=0, vmax=2)
-            
-            ax[1].set_xticklabels(list(mtds.sa.targets), fontdict=None, minor=False, rotation=-45)
-            ax[1].set_xticks(range(len(mtds.sa.targets)))
-            ax[1].set_yticklabels(list(mtds.sa.targets), fontdict=None, minor=False)
-            ax[1].set_yticks(range(len(mtds.sa.targets)))
+
+            mlabels = ['time', 'space', 'numerosity']
+            ax[1].set_xticklabels(mlabels, fontdict=None, fontsize=18, minor=False, rotation=-45)
+            ax[1].set_xticks(range(len(mlabels)))
+            ax[1].set_yticklabels(mlabels, fontdict=None, fontsize=18, minor=False)
+            ax[1].set_yticks(range(len(mlabels)))
             ax[1].set_title('Most stable dissimilarity pattern: {:.2f}'.format(np.mean(mean_consistency[mean_consistency.argmax()])))
             
             # add text of value to each field
             for i in range(len(rdm_data)):
                 for j in range(len(rdm_data)):
                     if i != j:
-                        ax[1].text(j, i, '{:.2f}'.format(rdm_data[i, j]), ha='center', va='center', color='w')
+                        ax[1].text(j, i, '{:.2f}'.format(rdm_data[i, j]), ha='center', va='center', color='w', fontsize=18)
             
             rdms_cummulative_allSubj[roi] = rdms_cummulative_allSubj[roi] + rdm_data        # save current RDM for group level
             max_cons_allSubj[roi].append(mean_consistency[mean_consistency.argmax()])    # save current rdm consistency for group level
@@ -198,7 +207,7 @@ for space in spaces:
             ax[2].set_title('Correlation of other searchlight voxels with most stable pattern')
                 
             if save_figs:
-                plt.savefig(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight.png'), dpi=300)
+                plt.savefig(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight_new.png'), dpi=300)
             
             plt.close()
             
@@ -228,11 +237,11 @@ for space in spaces:
                     pd_cond2.append(cond_comb[1])
 
                     if i == 0:
-                        pd_dm.append(rdms_allSubj[roi][s][0, 1])
+                        pd_dm.append(rdms_allSubj[roi][s][2, 1])
                     elif i == 1:
-                        pd_dm.append(rdms_allSubj[roi][s][0, 2])
+                        pd_dm.append(rdms_allSubj[roi][s][1, 0])
                     else:
-                        pd_dm.append(rdms_allSubj[roi][s][1, 2])
+                        pd_dm.append(rdms_allSubj[roi][s][2, 0])
 
                     pd_max_cons.append(max_cons_allSubj[roi][s])
                     pd_mean_cons.append(mean_cons_allSubj[roi][s])
@@ -245,17 +254,16 @@ for space in spaces:
                            'consistency_max': pd_max_cons,
                            'consistency_mean': pd_mean_cons})
 
-        df.to_csv(opj(group_result_dir, 'RDMs_searchlight.csv'), sep='\t',
+        df.to_csv(opj(group_result_dir, 'RDM_space-MNI152NLin2009cAsym_searchlight_mean.csv'), sep='\t',
                   columns=['subject', 'roi', 'condition_1', 'condition_2', 'dissimilarity', 'consistency_max', 'consistency_mean'],
                   index=False)
 
         if (len(masks) % 2) == 0:
-            fig, ax = plt.subplots(2, len(masks)/2, figsize=(20, 10))
+            fig, ax = plt.subplots(2, len(masks)/2, figsize=(20, 15))
         else:
             fig, ax = plt.subplots(1, len(masks), figsize=(20, 5), squeeze=False)
-            
-        plt.tight_layout(3)
-        fig.subplots_adjust(hspace=.15, wspace=.35)
+
+        fig.subplots_adjust(hspace=.5, wspace=.6)
         #fig.suptitle('Mean RDMs for most stable patterns', fontsize=20)
         
         # find max
@@ -282,17 +290,20 @@ for space in spaces:
             div = make_axes_locatable(ax[subplot_row, subplot_col])
             cax = div.append_axes("right", size="5%", pad=0.2)
             cbar = plt.colorbar(rdm_plot, cax=cax)
+            cbar.ax.tick_params(labelsize=16)
             rdm_plot.set_clim(vmin=0, vmax=np.max(max_vals))
-            ax[subplot_row, subplot_col].set_xticklabels(list(rdms_cummulative_allSubj['targets']), fontdict=None, minor=False, rotation=-45)
-            ax[subplot_row, subplot_col].set_xticks(range(len(rdms_cummulative_allSubj[roi])))
-            ax[subplot_row, subplot_col].set_yticklabels(list(rdms_cummulative_allSubj['targets']), fontdict=None, minor=False)
-            ax[subplot_row, subplot_col].set_yticks(range(len(rdms_cummulative_allSubj[roi])))
-            ax[subplot_row, subplot_col].set_title('{}, pattern reliability {:.2f}'.format(roi, np.mean(max_cons_allSubj[roi])))
+
+            mlabels = ['time', 'space', 'numerosity']
+            ax[subplot_row, subplot_col].set_xticklabels(mlabels, fontdict=None, minor=False, rotation=-45, fontsize=18)
+            ax[subplot_row, subplot_col].set_xticks(range(len(mlabels)))
+            ax[subplot_row, subplot_col].set_yticklabels(mlabels, fontdict=None, minor=False, fontsize=18)
+            ax[subplot_row, subplot_col].set_yticks(range(len(mlabels)))
+            ax[subplot_row, subplot_col].set_title('{}'.format(roi, np.mean(max_cons_allSubj[roi])))
             
             for i in range(len(rdms_cummulative_allSubj[roi])):
                 for j in range(len(rdms_cummulative_allSubj[roi])):
                     if i != j:
-                        ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(rdms_cummulative_allSubj[roi][i, j]), ha='center', va='center', color='w')
+                        ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(rdms_cummulative_allSubj[roi][i, j]), ha='center', va='center', color='black', fontsize=18)
             
-        plt.savefig(opj(group_result_dir, 'RDM_space-' + space + file_suffix + 'searchlight_mean.png'), dpi=300)
+        plt.savefig(opj(group_result_dir, 'RDM_space-' + space + file_suffix + 'searchlight_mean.pdf'), dpi=300)
         plt.close()

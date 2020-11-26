@@ -28,7 +28,9 @@ behavioral_dir = opj(experiment_dir, 'behavioural')
 # ------------ options ------------
 subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
 conditions = ['time', 'dist', 'dots']
-roi_names = ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
+roi_names = ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'hc_lh', 'hc_rh', 'insula_lh', 'insula_rh']
+# ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'hc_lh', 'hc_rh', 'insula_lh', 'insula_rh']
+# ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
 
 # read in behavioural data
 behav_data = pd.read_csv(opj(behavioral_dir, 'pse_data_cross_dim' + '.tsv'), delimiter='\t')
@@ -180,5 +182,5 @@ for condition_pair in itertools.combinations(conditions, 2):
 	#print(p_corr)
 
 arr = np.vstack(data_rsa_mvpa_all)
-[r_rsa_mvpa, p_rsa_mvpa] = stats.spearmanr(arr[:, 0], arr[:, 1])
-plt_regression(arr[:, 0], arr[:, 1], 'MVPA', 'RSA', 'R={:.3f}, p={:.3f}'.format(r_rsa_mvpa, p_rsa_mvpa))
+[r_rsa_mvpa, p_rsa_mvpa] = stats.pearsonr(arr[:, 0], arr[:, 1])
+plt_regression(arr[:, 0], arr[:, 1], 'MVPA', 'RSA', 'Correlation between MVPA and RSA values\nR={:.3f}, p={:.3f}'.format(r_rsa_mvpa, p_rsa_mvpa))
