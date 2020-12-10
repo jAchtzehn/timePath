@@ -11,11 +11,11 @@ mask_files = []
 for subj in subjects:
     sub_str = 'sub-' + str(subj).zfill(2)
     sub_folder = opj(datapath, sub_str, 'space-MNI152NLin2009cAsym', 'masks')
-    mask_files.append(opj(sub_folder, sub_str + '_ips_mask_binarized.nii.gz'))
+    mask_files.append(opj(sub_folder, sub_str + '_ifg_mask_binarized.nii.gz'))
 
 avg_image = mean_img(mask_files)
 avg_image_thr = threshold_img(avg_image, 0.5)
-avg_image_thr_bin = math_img('img >= 0.5', img=avg_image_thr)
-avg_image.to_filename('/home/achtzehnj/data/timePath/avg_ips.nii')
-avg_image_thr.to_filename('/home/achtzehnj/data/timePath/avg_ips_thresholded.nii')
-avg_image_thr_bin.to_filename('/home/achtzehnj/data/timePath/avg_ips_binarized.nii')
+avg_image_thr_bin = math_img('img >= 0.35', img=avg_image_thr)
+avg_image.to_filename('/home/achtzehnj/data/timePath/avg_ifg.nii')
+avg_image_thr.to_filename('/home/achtzehnj/data/timePath/avg_ifg_thresholded.nii')
+avg_image_thr_bin.to_filename('/home/achtzehnj/data/timePath/avg_ifg_binarized.nii')
