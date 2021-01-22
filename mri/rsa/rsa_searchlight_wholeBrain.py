@@ -35,11 +35,7 @@ subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 2
 # [1, 2, 3, 5, 8, 10, 11, 13, 15, 16, 18, 20, 21, 22, 25]                                               # the rest
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]               # all except 15
 conditions = ['time', 'dist', 'dots']
-mask = 'wb'
 file_suffix = ''
-plot_html = True
-group_level = True
-save_figs = True
 sl_radius = 6
 spaces = ['MNI152NLin2009cAsym']
 
@@ -62,8 +58,7 @@ for space in spaces:
         data_path = opj(nilearn_dir, subj_str, 'space-' + space, 'betas', subj_str + '_betas_merged.nii.gz')
         behav_path = opj(nilearn_dir, subj_str, 'space-' + space, 'betas', subj_str + '_merged_events.tsv')
 
-        mask_path = opj(nilearn_dir, subj_str, 'space-' + space, 'masks',
-                        subj_str + '_' + mask + '_mask_binarized.nii.gz')  # mask filename
+        mask_path = opj(nilearn_dir, 'group_masks', 'space-' + space, 'group_mask_wb_binarized.nii.gz')  # mask filename
 
         # read in behav data
         behav_data = pd.read_csv(behav_path, delimiter='\t')
@@ -73,7 +68,6 @@ for space in spaces:
 
         # create dataset
         fmri_data = fmri_dataset(data_path, mask=mask_path, targets=targets, chunks=chunks)
-
 
         fmri_data.sa['runs'] = runs
         fmri_data = remove_nonfinite_features(fmri_data)
