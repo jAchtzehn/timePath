@@ -94,6 +94,7 @@ for space in spaces:
         rdm_data_new_order[1, :] = slres.samples[2, :]
         rdm_data_new_order[2, :] = slres.samples[0, :]
 
+        rdm_data_new_order = np.nan_to_num(rdm_data_new_order)
         niimg = map2nifti(fmri_data, rdm_data_new_order)
 
         niimg.to_filename(opj(result_dir,
