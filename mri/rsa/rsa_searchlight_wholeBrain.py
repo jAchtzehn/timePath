@@ -73,9 +73,10 @@ for space in spaces:
         fmri_data = remove_nonfinite_features(fmri_data)
 
         # -- preprocessing
-        #zscore(fmri_data, chunks_attr='chunks')                     # zscoring the data to remove mean
+        zscore(fmri_data, chunks_attr='chunks')                     # zscoring the data to remove mean
         fmri_data = fmri_data[fmri_data.sa.targets != 'cross']      # remove cross from the conditions (targets)
 
+        # remove cross condition
         for cond in ['time', 'dist', 'dots', 'lumin']:
             if cond not in conditions:
                 fmri_data = fmri_data[fmri_data.sa.targets != cond]      # remove cross from the conditions (targets)
