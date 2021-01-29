@@ -4,8 +4,7 @@ from os.path import abspath
 from sys import platform
 import pandas as pd
 import itertools
-from nilearn.image import load_img, index_img
-from nilearn.glm import threshold_stats_img
+from nilearn.image import load_img, index_img, new_img_like
 import numpy as np
 from nilearn.input_data import NiftiMasker
 from nilearn.masking import _extrapolate_out_mask
@@ -17,7 +16,7 @@ from tqdm import tqdm
 experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath')
 
 rsa_dir = opj(experiment_dir, 'derivatives', 'rsa')
-behav_file = opj(experiment_dir, 'derivatives', 'behavioural', 'pse_data_cross_dim_individual_norm.tsv')
+behav_file = opj(experiment_dir, 'derivatives', 'behavioural', 'pse_data_cross_dim.tsv')
 behav_data = pd.read_csv(behav_file, delimiter='\t')
 mask_img = load_img(opj(experiment_dir, 'derivatives', 'rsa', 'group_mask_wb_binarized.nii.gz'))
 
@@ -49,39 +48,29 @@ for condition_pair in cbar:
 
 	for s, subjectID in enumerate(subjects):
 		rdm_map = load_img(opj(rsa_dir, 'sub-' + str(subjectID).zfill(2), 'space-MNI152NLin2009cAsym', 'results',
-		                       'sub-' + str(subjectID).zfill(2) + '_space-MNI152NLin2009cAsym_zscore_r3_wb_rdm_values.nii.gz'), )
+		                       'sub-' + str(subjectID).zfill(2) + '_space-MNI152NLin2009cAsym_wb_rdm_values.nii.gz'), )
 
 		# extract right 4D volume from nifti file (0 = time vs. space, 1 = time vs. num, 2 = space vs. num
 
 		rdm_map_dim = index_img(rdm_map, dimId)
 
-
-
 		rdm_dim_data[s, :] = masker.fit_transform(rdm_map_dim)
 
+	# average over all subjects
+	rdm_dim_data_mean = np.mean(rdm_dim_data, axis=0)
+
 	corr_data = np.zeros((1, 64291))
-	corr_data_p = np.zeros((1, 64291))
 
 	a = rdm_dim_data.shape[1]
 
 	vbar = tqdm(range(rdm_dim_data.shape[1]), leave=False, mininterval=1)
 	for vx in vbar:
 
-		[vx_corr_r, vx_corr_p] = stats.pearsonr(rdm_dim_data[:, vx], crossDim.T)
-		corr_data[0, vx] = vx_corr_r
-		if vx_corr_p <= 0.01:
-			corr_data_p[0, vx] = vx_corr_r
+		[vx_corr_r, vx_corr_p] = stats.spearmanr(rdm_dim_data[:, vx], crossDim.T)
 
-	# zscore data
-	corr_data_z = (corr_data - np.mean(corr_data)) / np.std(corr_data)
+		if vx_corr_p <= 0.05:
+			corr_data[0, vx] = vx_corr_r
 
 	corr_img = masker.inverse_transform(corr_data)
-	corr_img_p = masker.inverse_transform(corr_data_p)
-	corr_img_z = masker.inverse_transform(corr_data_z)
-
-	[corr_img_thresh, th] = threshold_stats_img(corr_img_z, cluster_threshold=5, alpha=0.05, height_control='fdr')
-
-	corr_img_thresh.to_filename(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_thresh.nii.gz'.format(condition_pair[0], condition_pair[1])))
 	corr_img.to_filename(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}.nii.gz'.format(condition_pair[0], condition_pair[1])))
-	corr_img_p.to_filename(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_p.nii.gz'.format(condition_pair[0], condition_pair[1])))
 
