@@ -178,6 +178,9 @@ def plot_coord_atlas_bg(con, x, coords, bg):
 	plt.savefig(opj(output_dir, 'contrast-' + con + '_cluster-' + str(x) + '.' + output_format), dpi=dpi, format=output_format)
 	plt.close()
 
+def plot_decode_bg(toDecode, coords, bg):
+
+
 if __name__ == "__main__":
 	args = get_args()
 
@@ -194,7 +197,19 @@ if __name__ == "__main__":
 		for x, coord in enumerate(coords):
 			plot_coord_atlas_bg(args.contrasts[0], x, coord, bg_img)
 
+	if 'decode_bg' in args.type:
 
+		bg_img_folder = opj('/home/achtzehnj/data/atlases/100um/Synthesized_FLASH25_in_MNI_v2_200um.nii.gz')
+		bg_img = load_img(bg_img_folder)
+		bg_img = threshold_img(bg_img, 9.)
+
+		coords = [[24, -84, 44]]
+		decode = 'time-vs-lumin'
+		plot_decode_bg(decode, coords, bg_img)
+
+# 2nd level
 # 15 [[42, -51, -19], [-54, -78, -2], [39, 48, -15], [48, -36, 54], [30, -72, 34], [24, -84, 44]], num > contr
 # 13 [[36, 45, -12], [18, -66, -2], [45, -81, 24]] dist > contr
 # 11 [[-45, 45, -12], [36, 45, -12], [-54, 27, 1]] time > contr
+
+# decode
