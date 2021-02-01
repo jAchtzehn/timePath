@@ -8,7 +8,10 @@ from nilearn._utils.niimg import _safe_get_data
 import numpy as np
 
 stat_img_fname = abspath('/Users/jachtzehn/Documents/DZNE/timePath/paper/figures/fig3/conjAll_thrSPM.nii')
-atlas_img = abspath('/Users/jachtzehn/data/fMRI/atlases/100um/Synthesized_FLASH25_in_MNI_v2_200um.nii.gz')
+atlas_img_path = abspath('/Users/jachtzehn/data/fMRI/atlases/100um/Synthesized_FLASH25_in_MNI_v2_200um.nii.gz')
+
+atlas_img = load_img(atlas_img_path)
+atlas_img = threshold_img(atlas_img, 9.)
 
 stat_img = load_img(stat_img_fname)
 stat_img_ = _safe_get_data(stat_img, ensure_finite=True)
@@ -17,10 +20,10 @@ stat_img__ = new_img_like(stat_img, data=stat_img_)
 #stat_img_resampled = resample_to_img(stat_img__, atlas_img_500)
 #stat_img_resampled.to_filename('/home/achtzehnj/data/timePath/conjAll_thrSPM_resampled.nii')
 
-plot_stat_map(stat_img, black_bg=False, cut_coords=[42, 45, -13], draw_cross=False, bg_img=atlas_img,
-              cmap='plasma', vmin=5.1, threshold=0, vmax=11.28, colorbar=True, dim=0)
+plot_stat_map(stat_img, black_bg=True, cut_coords=[42, 45, -13], draw_cross=True, bg_img=atlas_img,
+              cmap='viridis', vmin=6.39, threshold=0, vmax=13, colorbar=True, dim=0)
 
-plt.savefig('/Users/jachtzehn/Documents/DZNE/timePath/paper/figures/fig3/conj_white_bg.pdf', dpi=500, format='pdf')
+plt.savefig('/Users/jachtzehn/Documents/DZNE/timePath/paper/figures/fig3/conj_bg.pdf', dpi=500, format='pdf')
 plt.close()
 
 # for fname in ['dotsvslumin', 'distvslumin', 'timevslumin', 'conjAll']:
