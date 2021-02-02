@@ -39,7 +39,7 @@ subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 2
 # [1, 2, 3, 5, 8, 10, 11, 13, 15, 16, 18, 20, 21, 22, 25]                                               # the rest
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]               # all except 15
 conditions = ['time', 'dist', 'dots']
-file_suffix = ''
+file_suffix = 'cdist'
 sl_radius = 3
 spaces = ['MNI152NLin2009cAsym']
 
@@ -47,6 +47,8 @@ os.system('clear')                              # clean up terminal
 # if file_suffix is empty, add _
 if file_suffix == '':
     file_suffix = '_'
+else:
+    file_suffix = '_' + file_suffix + '_'
 
 minmaxscaler = MinMaxScaler(feature_range=(1, 2))
 for space in spaces:
@@ -103,15 +105,18 @@ for space in spaces:
         # first compute RDMs
         mtgs = mean_group_sample(['targets'])       # create the mean of all trials
         mtds = mtgs(fmri_data)
-        dsm = rsa.PDist(square=False, center_data=True)
+
+        dsm = rsa.CDist(auto_train=True, force_train=True)
+        #dsm = rsa.PDist(square=False, center_data=True)
 
         sl = sphere_searchlight(dsm, radius=sl_radius, nproc=46)
         slres = sl(mtds)
 
-        rdm_data_new_order = np.zeros(shape=slres.samples.shape)
-        rdm_data_new_order[0, :] = slres.samples[1, :]
-        rdm_data_new_order[1, :] = slres.samples[2, :]
-        rdm_data_new_order[2, :] = slres.samples[0, :]
+        rdm_data_new_order = np.zeros(shape=(3, len(slres.samples[0, :])))
+        rdm_data_new_order[0, :] = slres.samples[2, :]  # time vs. dist
+        rdm_data_new_order[1, :] = slres.samples[5, :]  # time vs. dots
+        rdm_data_new_order[2, :] = slres.samples[1, :]  # dots vs dist
+
         rdm_data_new_order = np.nan_to_num(rdm_data_new_order)
 
         # now compute RDM consistency by cross-validation with chunks
