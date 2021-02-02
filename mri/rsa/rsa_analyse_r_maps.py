@@ -51,8 +51,8 @@ cons_mean_img.to_filename(opj(rsa_dir, 'mean_consistency.nii.gz'))
 
 def calc_crossDim(condition_pair):
 	# load crossDim values for all 24 subjects into ndarray
-	crossDim = np.abs(behav_data['pse_diff'][(behav_data.condition_rel == condition_pair[0]) &
-	                                         (behav_data.condition_irrel == condition_pair[1])].values)
+	crossDim = behav_data['pse_diff'][(behav_data.condition_rel == condition_pair[0]) &
+	                                         (behav_data.condition_irrel == condition_pair[1])].values
 
 	if (condition_pair[0] == 'time' and condition_pair[1] == 'dist') or (
 			condition_pair[1] == 'time' and condition_pair[0] == 'dist'):
@@ -87,15 +87,16 @@ def calc_crossDim(condition_pair):
 	for vx in vbar:
 		[vx_corr_r, vx_corr_p] = stats.spearmanr(rdm_dim_data[:, vx], crossDim.T)
 		corr_data[0, vx] = vx_corr_r
-		if vx_corr_p <= 0.05 and cons_data[0, vx] > 0.3 and vx_corr_r < 0:
+		if vx_corr_p <= 0.05 and cons_data[0, vx] > 0.3:
 			corr_data_p[0, vx] = vx_corr_r
 	corr_data = corr_data * np.abs(cons_data_norm)
 
-	# sns.regplot(x=rdm_dim_data[:, corr_data_p.argmin()], y=crossDim.T, ax=ax[axNr])
-	# ax[axNr].set_xlabel('RDM')
-	# ax[axNr].set_ylabel('CrossDim')
-	# ax[axNr].set_title('rel-{}_irrel-{}'.format(condition_pair[0], condition_pair[1]))
-	# axNr = axNr + 1
+	sns.regplot(x=rdm_dim_data[:, corr_data_p.argmin()], y=crossDim.T)
+	plt.xlabel('RDM')
+	plt.ylabel('CrossDim')
+	plt.title('rel-{}_irrel-{}'.format(condition_pair[0], condition_pair[1]))
+	plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_corr_plot.pdf'.format(condition_pair[0], condition_pair[1])), format='pdf')
+	plt.close()
 
 	# zscore data
 	corr_data_z = (corr_data - np.mean(corr_data)) / np.std(corr_data)
@@ -106,7 +107,7 @@ def calc_crossDim(condition_pair):
 
 	[corr_img_thresh, th] = threshold_stats_img(corr_img_z, cluster_threshold=5, alpha=0.05, height_control='fdr')
 
-	plot_glass_brain(corr_img_p, colorbar=True, cmap='viridis', plot_abs=False, threshold=0, vmax=1, symmetric_cbar=False)
+	plot_glass_brain(corr_img_p, colorbar=True, cmap='viridis', plot_abs=False, vmax=1, symmetric_cbar=False)
 	plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_p.pdf'.format(condition_pair[0], condition_pair[1])), format='pdf')
 	plt.close()
 

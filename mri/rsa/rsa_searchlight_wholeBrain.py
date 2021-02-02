@@ -74,7 +74,7 @@ for space in spaces:
                                                                (pse_diff_data.condition_irrel == condition_pair[0]))) &
                                                              (pse_diff_data.subject == subj)].values))
 
-        crossDim_matrix = 1 - np.array([crossDim['dist_vs_dots'], crossDim['time_vs_dist'], crossDim['time_vs_dots']])
+        crossDim_matrix = -1 * np.array([crossDim['dist_vs_dots'], crossDim['time_vs_dist'], crossDim['time_vs_dots']])
         minmaxscaler.fit(crossDim_matrix.reshape(-1, 1))
         crossDim_matrix_norm = minmaxscaler.transform(crossDim_matrix.reshape(-1, 1))
 
