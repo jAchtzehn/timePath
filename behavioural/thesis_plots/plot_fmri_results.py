@@ -25,6 +25,7 @@ else:
 output_dir = opj(experiment_dir, 'derivatives', 'output_nipype', '2ndlevel')
 thesis_dir = abspath('/home/Documents/thesis/figures/results/fmri')
 thesis_dir_appendix = abspath('/home/Documents/thesis/figures/appendix')
+decode_dir = opj(experiment_dir, 'derivatives', 'nilearn', 'group_results_ispa_std')
 
 colormap = 'viridis'
 output_format = 'pdf'
@@ -37,7 +38,7 @@ def get_args():
 
 	parser.add_argument('--type', '-t', metavar='TYPE', help="Which type of plot is to be plotted", required=True, nargs=1)
 
-	parser.add_argument('--contrasts', '-c', metavar='CONTRASTS', nargs='+', help='Contrasts to be plotted', required=True)
+	parser.add_argument('--contrasts', '-c', metavar='CONTRASTS', nargs='+', help='Contrasts to be plotted', required=False)
 
 	return parser.parse_args()
 
@@ -178,8 +179,19 @@ def plot_coord_atlas_bg(con, x, coords, bg):
 	plt.savefig(opj(output_dir, 'contrast-' + con + '_cluster-' + str(x) + '.' + output_format), dpi=dpi, format=output_format)
 	plt.close()
 
-def plot_decode_bg(toDecode, coords, bg):
+def plot_decode_bg(toDecode, x, coords, bg):
 
+	decDir = opj(decode_dir, toDecode, 'snpm_batch')
+
+	img = load_img(opj(decDir, 'SnPM_filtered_masked.nii'))
+
+	plot_stat_map(img, bg_img=bg, title='', threshold=2.9, colorbar=True,
+	              vmax=15, vmin=2.9, cut_coords=coords,
+	              cmap='viridis', draw_cross=True, dim=False)
+
+	plt.savefig(opj(decode_dir, 'decode-' + toDecode + '_cluster-' + str(x) + '.' + output_format), dpi=dpi,
+	            format=output_format)
+	plt.close()
 
 if __name__ == "__main__":
 	args = get_args()
@@ -203,9 +215,11 @@ if __name__ == "__main__":
 		bg_img = load_img(bg_img_folder)
 		bg_img = threshold_img(bg_img, 9.)
 
-		coords = [[24, -84, 44]]
-		decode = 'time-vs-lumin'
-		plot_decode_bg(decode, coords, bg_img)
+		coords = [[45, -63, 1], [-48, -72, 1], [0, -84, 28]]
+		decode = 'dist-vs-dots'
+
+		for x, coord in enumerate(coords):
+			plot_decode_bg(decode, x, coord, bg_img)
 
 # 2nd level
 # 15 [[42, -51, -19], [-54, -78, -2], [39, 48, -15], [48, -36, 54], [30, -72, 34], [24, -84, 44]], num > contr
@@ -213,3 +227,9 @@ if __name__ == "__main__":
 # 11 [[-45, 45, -12], [36, 45, -12], [-54, 27, 1]] time > contr
 
 # decode
+# [[9, -87, -9], [48, 45, -9], [-48, 45, -9], [9, -30, -9]] time-vs-lumin
+# [[12, -72, -2], [3, -63, 44], [36, 48, -15], [0, -30, -5]] dist-vs-lumin
+# [[45, -84, -5], [-48, -87, 1], [27, -69, 34], [0, -72, 54], [-3, -18, 14], [42, 48, -12], [-3, -39, 28]] dots-vs-lumin
+
+# [[45, -66, -2], [-48, -78, 1], [36, -57, 57], [-36, -60, 57], [6, -87, 13]] time-vs-dots
+# [[45, -63, 1], [-48, -72, 1], [0, -84, 28]] dist-vs-dots

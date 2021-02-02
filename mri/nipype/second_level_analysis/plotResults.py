@@ -18,7 +18,7 @@ import numpy as np
 if platform == 'darwin':
 	experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath/')
 else:
-	experiment_dir = abspath('/mnt/work/achtzehnj/data')
+	experiment_dir = abspath('/home/achtzehnj/data/timePath/')
 
 # ---- options ----
 addMarkers = False
@@ -31,6 +31,11 @@ fs_average = 'fsaverage5'
 
 contrast_ids = [('%04d' % x) for x in contrast_list]
 condition_names = ['time', 'dist', 'lumin', 'dots', 'icon', 'comp']
+contrasts = [['2-TDD-avg', 'T', condition_names, [1/3, 1/3, 0, 1/3, 0, 0]]]
+output_dir = opj(experiment_dir, 'derivatives', 'output_nipype', '2ndlevel_higher_cluster')
+thesis_dir = abspath('/Users/jachtzehn/Documents/Medizin/thesis/figures/results/fmri')
+thesis_dir_appendix = abspath('/Users/jachtzehn/Documents/Medizin/thesis/figures/appendix')
+
 # contrasts = [['1-trial-avg', 'T', condition_names, [0.25, 0.25, 0.25, 0.25, 0, 0]],
 #                  ['2-TDD-avg', 'T', condition_names, [1/3, 1/3, 0, 1/3, 0, 0]],
 #                  ['3-time', 'T', condition_names, [1, 0, 0, 0, 0, 0]],
@@ -58,27 +63,21 @@ condition_names = ['time', 'dist', 'lumin', 'dots', 'icon', 'comp']
 #                  ['25-dots-gt-dist', 'T', condition_names, [0, -1, 0, 1, 0, 0]]
 #              ]
 
-contrasts = [['2-TDD-avg', 'T', condition_names, [1/3, 1/3, 0, 1/3, 0, 0]]]
-
-output_dir = opj(experiment_dir, 'output_nipype', '2ndlevel_higher_cluster')
-thesis_dir = abspath('/Users/jachtzehn/Documents/Medizin/thesis/figures/results/fmri')
-thesis_dir_appendix = abspath('/Users/jachtzehn/Documents/Medizin/thesis/figures/appendix')
-
-mpl.rc('text', usetex=True)
-pl.rcParams['text.latex.preamble'] = [
-    r'\usepackage{tgheros}',    # helvetica font
-    r'\usepackage{sansmath}',   # math-font matching  helvetica
-    r'\sansmath'                # actually tell tex to use it!
-    r'\usepackage{siunitx}',    # micro symbols
-    r'\sisetup{detect-all}',    # force siunitx to use the fonts
-]
-mpl.rcParams['ytick.labelsize'] = 18
-mpl.rcParams['xtick.labelsize'] = 22
-mpl.rcParams['axes.linewidth'] = 1
-mpl.rcParams['axes.labelsize'] = 28
-mpl.rcParams['axes.labelpad'] = 12
-mpl.rcParams['axes.titlesize'] = 32
-mpl.rcParams['axes.titlepad'] = 20
+# mpl.rc('text', usetex=True)
+# pl.rcParams['text.latex.preamble'] = [
+#     r'\usepackage{tgheros}',    # helvetica font
+#     r'\usepackage{sansmath}',   # math-font matching  helvetica
+#     r'\sansmath'                # actually tell tex to use it!
+#     r'\usepackage{siunitx}',    # micro symbols
+#     r'\sisetup{detect-all}',    # force siunitx to use the fonts
+# ]
+# mpl.rcParams['ytick.labelsize'] = 18
+# mpl.rcParams['xtick.labelsize'] = 22
+# mpl.rcParams['axes.linewidth'] = 1
+# mpl.rcParams['axes.labelsize'] = 28
+# mpl.rcParams['axes.labelpad'] = 12
+# mpl.rcParams['axes.titlesize'] = 32
+# mpl.rcParams['axes.titlepad'] = 20
 
 
 def plotContrastVolumes():
