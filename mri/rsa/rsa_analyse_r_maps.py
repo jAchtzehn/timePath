@@ -19,8 +19,8 @@ from multiprocessing import Pool
 
 
 # ------------ File I/O ------------
-experiment_dir = abspath('/home/achtzehnj/data/timePath/')
-# experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath')
+#experiment_dir = abspath('/home/achtzehnj/data/timePath/')
+experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath')
 
 rsa_dir = opj(experiment_dir, 'derivatives', 'rsa')
 behav_file = opj(experiment_dir, 'derivatives', 'behavioural', 'pse_data_cross_dim_individual_norm.tsv')
@@ -32,18 +32,18 @@ subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 2
 conditions = ['time', 'dist', 'dots']
 
 masker = NiftiMasker(mask_img=mask_img, standardize=False, detrend=False,
-                     memory=abspath('/home/achtzehnj/code/nilearn_utilities/cache'), memory_level=1)
+                     memory=abspath('/Users/jachtzehn/data/fMRI/nilearn_cache'), memory_level=1)
 
 # compute mean consistency map
-cons_imgs = []
-for subjectID in subjects:
-	cons_imgs.append(opj(rsa_dir, 'sub-' + str(subjectID).zfill(2),
-	                     'space-MNI152NLin2009cAsym', 'results',
-	                     'sub-' + str(subjectID).zfill(
-		                     2) + '_space-MNI152NLin2009cAsym_wb_cons_values.nii.gz'))
-
-cons_mean_img = mean_img(cons_imgs)
-cons_mean_img.to_filename(opj(rsa_dir, 'mean_consistency.nii.gz'))
+# cons_imgs = []
+# for subjectID in subjects:
+# 	cons_imgs.append(opj(rsa_dir, 'sub-' + str(subjectID).zfill(2),
+# 	                     'space-MNI152NLin2009cAsym', 'results',
+# 	                     'sub-' + str(subjectID).zfill(
+# 		                     2) + '_space-MNI152NLin2009cAsym_wb_cons_values.nii.gz'))
+#
+# cons_mean_img = mean_img(cons_imgs)
+# cons_mean_img.to_filename(opj(rsa_dir, 'mean_consistency.nii.gz'))
 
 #f, ax = plt.subplots(6, 1, figsize=(6, 20))
 #axNr = 0
@@ -79,6 +79,8 @@ def calc_crossDim(condition_pair):
 	corr_data = np.zeros((1, 64291))
 	corr_data_p = np.zeros((1, 64291))
 
+	cons_mean_img = load_img(opj(rsa_dir, 'mean_consistency.nii.gz'))
+
 	# load mean consistency map
 	cons_data = masker.fit_transform(cons_mean_img)
 	cons_data_norm = cons_data / np.max(cons_data)
@@ -87,7 +89,7 @@ def calc_crossDim(condition_pair):
 	for vx in vbar:
 		[vx_corr_r, vx_corr_p] = stats.spearmanr(rdm_dim_data[:, vx], crossDim.T)
 		corr_data[0, vx] = vx_corr_r
-		if vx_corr_p <= 0.05 and cons_data[0, vx] > 0.3:
+		if vx_corr_p <= 0.05 and cons_data[0, vx] >= 0.3:
 			corr_data_p[0, vx] = vx_corr_r
 	corr_data = corr_data * np.abs(cons_data_norm)
 
