@@ -13,26 +13,27 @@ from utilFunctions import create_html_report
 
 # ------------ File I/O ------------
 if platform == 'darwin':
-    experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath/')
+    experiment_dir = abspath('/Volumes/Seagate/Backups/16102020/data/timePath')
 else:
-    experiment_dir = abspath('/media/sf_data/fMRI/timePath/')
+    experiment_dir = abspath('/home/achtzehnj/data/timePath/')
 
-nilearn_dir = opj(experiment_dir, 'nilearn')
-rsa_dir = opj(experiment_dir, 'rsa')
+nilearn_dir = opj(experiment_dir, 'derivatives', 'nilearn')
+rsa_dir = opj(experiment_dir, 'derivatives', 'rsa')
 
 os.system('mkdir -p %s' % rsa_dir)                 # create the mvpa2 folder for data storage
 
 # ------------ options ------------
-subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]     # subjects to plot
+#subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]     # subjects to plot
+subjects = [1, 2, 3]     # subjects to plot
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]  # all except 15
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]  # all
 conditions = ['time', 'dist', 'dots']
-masks = ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'hc_lh', 'hc_rh', 'V5_rh', 'V5_lh', 'insula_rh', 'insula_lh']
+masks = ['rois']
 # ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'hc_lh', 'hc_rh', 'V5_rh', 'V5_lh', 'insula_rh', 'insula_lh']
 plot_html = False
 plot_group_level = True
 spaces = ['MNI152NLin2009cAsym']
-file_suffix = 'centered'
+file_suffix = 'roi_2ndlevel'
 os.system('clear')                              # clean up terminal
 
 for space in spaces:
@@ -74,7 +75,7 @@ for space in spaces:
      
             # -- data loading
             data_path = opj(nilearn_dir, subj_str, 'space-' + space, 'betas', subj_str + '_betas_merged.nii.gz')
-            if roi == 'V5_rh' or roi == 'V5_lh':
+            if roi == 'V5_rh' or roi == 'V5_lh' or roi == 'rois':
                 mask_path = opj(nilearn_dir, 'group_masks', 'space-' + space,
                                 'group_mask_' + roi + '_binarized.nii.gz')  # mask filename
             else:
@@ -129,23 +130,23 @@ for space in spaces:
             res_stab = dsm_stab(mtds_stab)
             
             # plotting
-            rdm_plot = ax[subplot_row, subplot_col].imshow(res, interpolation='nearest')
-            div = make_axes_locatable(ax[subplot_row, subplot_col])
-            cax = div.append_axes("right", size="5%", pad=0.2)
-            cbar = plt.colorbar(rdm_plot, cax=cax)
-            rdm_plot.set_clim(vmin=0, vmax=2)
-            ax[subplot_row, subplot_col].set_xticklabels(list(mtds.sa.targets), fontdict=None, minor=False, rotation=-45)
-            ax[subplot_row, subplot_col].set_xticks(range(len(res)))
-            ax[subplot_row, subplot_col].set_yticklabels(list(mtds.sa.targets), fontdict=None, minor=False)
-            ax[subplot_row, subplot_col].set_yticks(range(len(res)))
-            ax[subplot_row, subplot_col].set_title(roi + '; RDM stability: %s'
-                                                   % '{:.2f}'.format(np.mean(res_stab.samples)))
-            
-            # add text of value to each field
-            for i in range(len(res)):
-                for j in range(len(res)):
-                    if i != j:
-                        ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(res.samples[i, j]), ha='center', va='center', color='w')
+            # rdm_plot = ax[subplot_row, subplot_col].imshow(res, interpolation='nearest')
+            # div = make_axes_locatable(ax[subplot_row, subplot_col])
+            # cax = div.append_axes("right", size="5%", pad=0.2)
+            # cbar = plt.colorbar(rdm_plot, cax=cax)
+            # rdm_plot.set_clim(vmin=0, vmax=2)
+            # ax[subplot_row, subplot_col].set_xticklabels(list(mtds.sa.targets), fontdict=None, minor=False, rotation=-45)
+            # ax[subplot_row, subplot_col].set_xticks(range(len(res)))
+            # ax[subplot_row, subplot_col].set_yticklabels(list(mtds.sa.targets), fontdict=None, minor=False)
+            # ax[subplot_row, subplot_col].set_yticks(range(len(res)))
+            # ax[subplot_row, subplot_col].set_title(roi + '; RDM stability: %s'
+            #                                        % '{:.2f}'.format(np.mean(res_stab.samples)))
+            #
+            # # add text of value to each field
+            # for i in range(len(res)):
+            #     for j in range(len(res)):
+            #         if i != j:
+            #             ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(res.samples[i, j]), ha='center', va='center', color='w')
         
             # save RDM for group level
             rdms_cummulative_allSubj[roi] = rdms_cummulative_allSubj[roi] + res.samples
@@ -154,9 +155,9 @@ for space in spaces:
 
             rdms_allSubj[roi].append(res.samples)
             
-        plt.savefig(opj(result_dir, subj_str + '_space-' + space + '_RDM_roi_' + file_suffix + '.png'), dpi=300)
-        rdm_images_list.append(opj(result_dir, subj_str + '_space-' + space + '_RDM_roi_' + file_suffix + '.png'))
-        plt.close()
+        # plt.savefig(opj(result_dir, subj_str + '_space-' + space + '_RDM_roi_' + file_suffix + '.png'), dpi=300)
+        # rdm_images_list.append(opj(result_dir, subj_str + '_space-' + space + '_RDM_roi_' + file_suffix + '.png'))
+        # plt.close()
     
     # plot individual RDMs
     if plot_html:
@@ -218,23 +219,23 @@ for space in spaces:
                 subplot_col = roi_enum - len(masks)/2
         
             # plotting
-            rdm_plot = ax[subplot_row, subplot_col].imshow(rdms_cummulative_allSubj[roi], interpolation='nearest')
+            rdm_plot = ax.imshow(rdms_cummulative_allSubj[roi], interpolation='nearest')
             div = make_axes_locatable(ax[subplot_row, subplot_col])
             cax = div.append_axes("right", size="5%", pad=0.2)
             cbar = plt.colorbar(rdm_plot, cax=cax)
             rdm_plot.set_clim(vmin=0, vmax=np.max(max_vals))
-            ax[subplot_row, subplot_col].set_xticklabels(list(rdms_cummulative_allSubj['targets']), fontdict=None, minor=False, rotation=-45)
-            ax[subplot_row, subplot_col].set_xticks(range(len(rdms_cummulative_allSubj[roi])))
-            ax[subplot_row, subplot_col].set_yticklabels(list(rdms_cummulative_allSubj['targets']), fontdict=None, minor=False)
-            ax[subplot_row, subplot_col].set_yticks(range(len(rdms_cummulative_allSubj[roi])))
-            ax[subplot_row, subplot_col].set_title(roi + '; RDM stability: %s +/- %s'
+            ax.set_xticklabels(list(rdms_cummulative_allSubj['targets']), fontdict=None, minor=False, rotation=-45)
+            ax.set_xticks(range(len(rdms_cummulative_allSubj[roi])))
+            ax.set_yticklabels(list(rdms_cummulative_allSubj['targets']), fontdict=None, minor=False)
+            ax.set_yticks(range(len(rdms_cummulative_allSubj[roi])))
+            ax.set_title(roi + '; RDM stability: %s +/- %s'
                                                    % ('{:.2f}'.format(np.mean(rdms_stab_allSubj[roi])),
                                                       '{:.2f}'.format(np.std(rdms_stab_allSubj[roi]))))
             
             for i in range(len(rdms_cummulative_allSubj[roi])):
                 for j in range(len(rdms_cummulative_allSubj[roi])):
                     if i != j:
-                        ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(rdms_cummulative_allSubj[roi][i, j]), ha='center', va='center', color='w')
+                        ax.text(j, i, '{:.2f}'.format(rdms_cummulative_allSubj[roi][i, j]), ha='center', va='center', color='w')
             
-        plt.savefig(opj(group_result_dir, 'RDM_space-' + space + '_roi_' + file_suffix + '.png'), dpi=300)
+        plt.savefig(opj(group_result_dir, 'RDM_space-' + space + '_roi_' + file_suffix + '.pdf'), format='pdf', dpi=300)
         plt.close()

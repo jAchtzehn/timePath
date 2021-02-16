@@ -31,15 +31,16 @@ os.system('mkdir -p %s' % rsa_dir)                 # create the mvpa2 folder for
 
 # ------------ options ------------
 subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]     # subjects to plot
+#subjects = [1, 2]     # subjects to plot
 # [4, 6, 7, 9, 12, 14, 17, 19, 23, 24]                                                                  # 10 best subjects (TSNR >= 50)
 # [1, 2, 3, 5, 8, 10, 11, 13, 15, 16, 18, 20, 21, 22, 25]                                               # the rest
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]               # all except 15
 conditions = ['time', 'dist', 'dots']
-masks = ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
+masks = ['rois', 'hc_lh', 'hc_rh', 'V5_lh']
 # ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'hc_lh', 'hc_rh', 'insula_lh', 'insula_rh']
 # ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
 file_suffix = ''
-plot_html = True
+plot_html = False
 group_level = True
 save_figs = True
 sl_radius = 6
@@ -84,7 +85,7 @@ for space in spaces:
             # -- data loading
             data_path = opj(nilearn_dir, subj_str, 'space-' + space, 'betas', subj_str + '_betas_merged.nii.gz')
             behav_path = opj(nilearn_dir, subj_str, 'space-' + space, 'betas', subj_str + '_merged_events.tsv')
-            if roi == 'V5_rh' or roi == 'V5_lh':
+            if roi == 'V5_rh' or roi == 'V5_lh' or roi == 'rois':
                 mask_path = opj(nilearn_dir, 'group_masks', 'space-' + space,
                                     'group_mask_' + roi + '_binarized.nii.gz')  # mask filename
             else:
@@ -121,32 +122,34 @@ for space in spaces:
             mtgs = mean_group_sample(['targets'])       # create the mean of all trials
             mtds = mtgs(fmri_data)
             dsm = rsa.PDist(square=False, center_data=True)
+
+            slres = dsm(mtds)
+
+            # sl = sphere_searchlight(dsm, radius=sl_radius, nproc=24)
+            # slres = sl(mtds)
+            #
+            # # now compute RDM consistency by cross-validation with chunks
+            # mtcgs = mean_group_sample(['targets', 'chunks'])
+            # mtcds = mtcgs(fmri_data)
+            # dscm = rsa.PDistConsistency(center_data=True)
+            #
+            # sl_stab = sphere_searchlight(dscm, radius=sl_radius, nproc=24)
+            # slres_stab = sl_stab(mtcds)
+            # mean_consistency = np.mean(slres_stab, axis=0)
+            #
+            # # compare all the other voxels to the most stable pattern and
+            # # find out if they are alike
+            # tdsm = rsa.PDistTargetSimilarity(slres.samples[:, mean_consistency.argmax()])
+            # sl_tdsm = sphere_searchlight(ChainLearner([tdsm, TransposeMapper()]), radius=sl_radius, nproc=8)
+            # slres_tdsm = sl_tdsm(mtds)
             
-            sl = sphere_searchlight(dsm, radius=sl_radius, nproc=24)
-            slres = sl(mtds)
-            
-            # now compute RDM consistency by cross-validation with chunks
-            mtcgs = mean_group_sample(['targets', 'chunks'])
-            mtcds = mtcgs(fmri_data)
-            dscm = rsa.PDistConsistency(center_data=True)
-            
-            sl_stab = sphere_searchlight(dscm, radius=sl_radius, nproc=24)
-            slres_stab = sl_stab(mtcds)
-            mean_consistency = np.mean(slres_stab, axis=0)
-            
-            # compare all the other voxels to the most stable pattern and
-            # find out if they are alike
-            tdsm = rsa.PDistTargetSimilarity(slres.samples[:, mean_consistency.argmax()])
-            sl_tdsm = sphere_searchlight(ChainLearner([tdsm, TransposeMapper()]), radius=sl_radius, nproc=8)
-            slres_tdsm = sl_tdsm(mtds)
-            
-            # -- create .nii.gz
-            niimg = map2nifti(fmri_data, mean_consistency)
-            niimg.to_filename(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight.nii.gz'))
+            # # -- create .nii.gz
+            # niimg = map2nifti(fmri_data, mean_consistency)
+            # niimg.to_filename(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight.nii.gz'))
 
             # save individual results
             with open(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'roiData.pkl'), 'wb+') as f:
-                cPickle.dump([slres, mean_consistency, mtds.sa.targets], f)
+                cPickle.dump([slres, mtds.sa.targets], f)
                 f.close()
 
             # -- plotting
@@ -155,63 +158,65 @@ for space in spaces:
             plt.tight_layout(5)
             fig.subplots_adjust(wspace=0.05)
             
-            # plot location
-            coords = tuple(coord_transform(mtds.fa.voxel_indices[mean_consistency.argmax()][0],
-                                           mtds.fa.voxel_indices[mean_consistency.argmax()][1],
-                                           mtds.fa.voxel_indices[mean_consistency.argmax()][2],
-                                           fmri_data.a.imgaffine))
-            plot_stat_map(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight.nii.gz'), bg_img=anat_path,
-                          display_mode='ortho', draw_cross=True,
-                          cmap='viridis', symmetric_cbar=False,
-                          cut_coords=coords, threshold=0, axes=ax[0])
-            ax[0].set_title('Location of most stable pattern')
+            # # plot location
+            # coords = tuple(coord_transform(mtds.fa.voxel_indices[mean_consistency.argmax()][0],
+            #                                mtds.fa.voxel_indices[mean_consistency.argmax()][1],
+            #                                mtds.fa.voxel_indices[mean_consistency.argmax()][2],
+            #                                fmri_data.a.imgaffine))
+            # plot_stat_map(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight.nii.gz'), bg_img=anat_path,
+            #               display_mode='ortho', draw_cross=True,
+            #               cmap='viridis', symmetric_cbar=False,
+            #               cut_coords=coords, threshold=0, axes=ax[0])
+            # ax[0].set_title('Location of most stable pattern')
             
             # plot RDM
             # reformat so that the matrix has the order time-space-numerosity
             rdm_data_ns = np.zeros(shape=3)
-            rdm_max_cons = slres.samples[:, mean_consistency.argmax()]
+            rdm_max_cons = slres.samples
             rdm_data_ns[0] = rdm_max_cons[1]
             rdm_data_ns[1] = rdm_max_cons[2]
             rdm_data_ns[2] = rdm_max_cons[0]
+
             #rdm_data = squareform(slres.samples[:, mean_consistency.argmax()])
             rdm_data = squareform(rdm_data_ns)
-            rdm_plot = ax[1].imshow(rdm_data, interpolation='nearest')
-            div = make_axes_locatable(ax[1])
-            cax = div.append_axes("right", size="5%", pad=0.2)
-            cbar = plt.colorbar(rdm_plot, cax=cax)
-            rdm_plot.set_clim(vmin=0, vmax=2)
 
-            mlabels = ['time', 'space', 'numerosity']
-            ax[1].set_xticklabels(mlabels, fontdict=None, fontsize=18, minor=False, rotation=-45)
-            ax[1].set_xticks(range(len(mlabels)))
-            ax[1].set_yticklabels(mlabels, fontdict=None, fontsize=18, minor=False)
-            ax[1].set_yticks(range(len(mlabels)))
-            ax[1].set_title('Most stable dissimilarity pattern: {:.2f}'.format(np.mean(mean_consistency[mean_consistency.argmax()])))
-            
-            # add text of value to each field
-            for i in range(len(rdm_data)):
-                for j in range(len(rdm_data)):
-                    if i != j:
-                        ax[1].text(j, i, '{:.2f}'.format(rdm_data[i, j]), ha='center', va='center', color='w', fontsize=18)
+            # rdm_plot = ax[1].imshow(rdm_data, interpolation='nearest')
+            # div = make_axes_locatable(ax[1])
+            # cax = div.append_axes("right", size="5%", pad=0.2)
+            # cbar = plt.colorbar(rdm_plot, cax=cax)
+            # rdm_plot.set_clim(vmin=0, vmax=2)
+            #
+            # mlabels = ['time', 'space', 'numerosity']
+            # ax[1].set_xticklabels(mlabels, fontdict=None, fontsize=18, minor=False, rotation=-45)
+            # ax[1].set_xticks(range(len(mlabels)))
+            # ax[1].set_yticklabels(mlabels, fontdict=None, fontsize=18, minor=False)
+            # ax[1].set_yticks(range(len(mlabels)))
+            # ax[1].set_title('Most stable dissimilarity pattern: {:.2f}'.format(np.mean(mean_consistency[mean_consistency.argmax()])))
+            #
+            # # add text of value to each field
+            # for i in range(len(rdm_data)):
+            #     for j in range(len(rdm_data)):
+            #         if i != j:
+            #             ax[1].text(j, i, '{:.2f}'.format(rdm_data[i, j]), ha='center', va='center', color='w', fontsize=18)
             
             rdms_cummulative_allSubj[roi] = rdms_cummulative_allSubj[roi] + rdm_data        # save current RDM for group level
-            max_cons_allSubj[roi].append(mean_consistency[mean_consistency.argmax()])    # save current rdm consistency for group level
-            mean_cons_allSubj[roi].append(np.mean(mean_consistency))
+            #max_cons_allSubj[roi].append(mean_consistency[mean_consistency.argmax()])    # save current rdm consistency for group level
+            #mean_cons_allSubj[roi].append(np.mean(mean_consistency))
             rdms_cummulative_allSubj['targets'] = mtds.sa.targets               # save condition names for group level
             rdms_allSubj[roi].append(rdm_data)
-
-            # plot correlation of other voxels to most stable pattern
-            ax[2].hist(slres_tdsm.samples[0], normed=False, bins=75, color='SkyBlue')
-            ax[2].set_ylabel('Number of voxels')
-            ax[2].set_xlabel('Target similarity structure correlation')
-            ax[2].set_title('Correlation of other searchlight voxels with most stable pattern')
-                
-            if save_figs:
-                plt.savefig(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight_new.png'), dpi=300)
+            #
+            # # plot correlation of other voxels to most stable pattern
+            # ax[2].hist(slres_tdsm.samples[0], normed=False, bins=75, color='SkyBlue')
+            # ax[2].set_ylabel('Number of voxels')
+            # ax[2].set_xlabel('Target similarity structure correlation')
+            # ax[2].set_title('Correlation of other searchlight voxels with most stable pattern')
+            #
+            # if save_figs:
+            #     plt.savefig(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight_new.png'), dpi=300)
             
             plt.close()
             
-            rdm_location_img_list.append(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight.png'))
+            # rdm_location_img_list.append(opj(result_dir, subj_str + '_space-' + space + '_mask-' + roi + file_suffix + 'RDM_location_searchlight.png'))
 
         if plot_html:
             create_html_report(rdm_location_img_list,
@@ -243,19 +248,17 @@ for space in spaces:
                     else:
                         pd_dm.append(rdms_allSubj[roi][s][2, 0])
 
-                    pd_max_cons.append(max_cons_allSubj[roi][s])
-                    pd_mean_cons.append(mean_cons_allSubj[roi][s])
+                    #pd_max_cons.append(max_cons_allSubj[roi][s])
+                    #pd_mean_cons.append(mean_cons_allSubj[roi][s])
 
         df = pd.DataFrame({'subject': pd_subjId,
                            'roi': pd_roi,
                            'condition_1': pd_cond1,
                            'condition_2': pd_cond2,
-                           'dissimilarity': pd_dm,
-                           'consistency_max': pd_max_cons,
-                           'consistency_mean': pd_mean_cons})
+                           'dissimilarity': pd_dm})
 
         df.to_csv(opj(group_result_dir, 'RDM_space-MNI152NLin2009cAsym_searchlight_mean.csv'), sep='\t',
-                  columns=['subject', 'roi', 'condition_1', 'condition_2', 'dissimilarity', 'consistency_max', 'consistency_mean'],
+                  columns=['subject', 'roi', 'condition_1', 'condition_2', 'dissimilarity'],
                   index=False)
 
         if (len(masks) % 2) == 0:
@@ -305,5 +308,5 @@ for space in spaces:
                     if i != j:
                         ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(rdms_cummulative_allSubj[roi][i, j]), ha='center', va='center', color='black', fontsize=18)
             
-        plt.savefig(opj(group_result_dir, 'RDM_space-' + space + file_suffix + 'searchlight_mean.pdf'), dpi=300)
+        plt.savefig(opj(group_result_dir, 'RDM_space-' + space + file_suffix + 'searchlight_mean.pdf'), format='pdf', dpi=300)
         plt.close()

@@ -89,7 +89,7 @@ def calc_crossDim(condition_pair):
 	for vx in vbar:
 		[vx_corr_r, vx_corr_p] = stats.spearmanr(rdm_dim_data[:, vx], crossDim.T)
 		corr_data[0, vx] = vx_corr_r
-		if vx_corr_p <= 0.05 and cons_data[0, vx] >= 0.3:
+		if vx_corr_p <= 0.05:
 			corr_data_p[0, vx] = vx_corr_r
 	corr_data = corr_data * np.abs(cons_data_norm)
 
