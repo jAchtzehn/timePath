@@ -1,0 +1,184 @@
+Cluster 1 (48 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  (u > 0.00, k > 2)
+
+10.9 	  voxel =  	 22.6 	      % in  	   right 	  Area hOc4la 	   4.1 	 % of this area activated 
+9.5 	  voxel =  	 19.8 	      % in  	   right 	  Area FG2 	   9.9 	 % of this area activated 
+4.2 	  voxel =  	 8.7 	      % in  	   right 	  Area FG1 	   5.7 	 % of this area activated 
+3.0 	  voxel =  	 6.3 	      % in  	   right 	  Area hOc4lp 	   1.8 	 % of this area activated 
+2.9 	  voxel =  	 6.0 	      % in  	   right 	  Area FG4 	   1.5 	 % of this area activated 
+1.9 	  voxel =  	 3.9 	      % in  	   right 	  Area hOc4v [V4(v)] 	   1.0 	 % of this area activated 
+0.3 	  voxel =  	 0.5 	      % in  	   right 	  Area  FG3 	   0.2 	 % of this area activated 
+
+32.6 	  voxel =  	 67.8 	      % of the cluster volume are assigned in total
+
+
+
+
+
+
+
+
+
+Cluster 2 (42 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+19.2 	  voxel =  	 45.8 	      % in  	   left 	  Area hOc1 [V1] 	   3.2 	 % of this area activated 
+14.8 	  voxel =  	 35.3 	      % in  	   left 	  Area hOc2 [V2] 	   5.3 	 % of this area activated 
+5.1 	  voxel =  	 12.1 	      % in  	   left 	  Area hOc3d [V3d] 	   1.7 	 % of this area activated 
+0.2 	  voxel =  	 0.4 	      % in  	   left 	  Area hOc4lp 	   0.1 	 % of this area activated 
+0.2 	  voxel =  	 0.4 	      % in  	   left 	  Area hOc3v [V3v] 	   0.1 	 % of this area activated 
+
+39.5 	  voxel =  	 94.0 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	 -12	 -112	   6 		MNI: 	 -12	 -108	   1		N/A	 -> Assigned to 	 right	 Area hOc1 [V1]	 
+	Probability for  	 Area hOc1 [V1] 	 40	 %           [	 14	 52	 %] 
+	Probability for  	 Area hOc2 [V2] 	 32	 %           [	 19	 41	 %] 
+
+
+
+
+
+
+Cluster 3 (27 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+22.1 	  voxel =  	 82.0 	      % in  	   left 	  Area hOc4lp 	   8.8 	 % of this area activated 
+1.4 	  voxel =  	 5.3 	      % in  	   left 	  Area hOc3d [V3d] 	   0.5 	 % of this area activated 
+
+23.6 	  voxel =  	 87.4 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	 -36	 -100	  13 		MNI: 	 -36	 -96	   8		N/A	 -> Assigned to 	 right	 Area hOc4lp	 
+	Probability for  	 Area hOc4lp    	 46	 %           [	 16	 63	 %] 
+	Probability for  	 Area hOc3v [V3v]	 19	 %           [	  0	 25	 %] 
+	Probability for  	 Area hOc3d [V3d]	  6	 %           [	  0	 21	 %] 
+	Probability for  	 Area hOc4d [V3A]	  3	 %           [	  0	 16	 %] 
+	Probability for  	 Area hOc2 [V2] 	  1	 %           [	  0	  6	 %] 
+
+
+
+
+
+
+Cluster 4 (24 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+5.9 	  voxel =  	 24.4 	      % in  	   left 	  Area FG4 	   2.4 	 % of this area activated 
+
+5.9 	  voxel =  	 24.4 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	 -54	 -52	 -17 		MNI: 	 -54	 -48	 -22		L Inferior Temporal Gyrus
+	Probability for  	 Area FG4       	  8	 %           [	  2	 19	 %] 
+
+
+
+
+
+
+Cluster 5 (23 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+7.7 	  voxel =  	 33.3 	      % in  	   left 	  Area FG2 	   5.1 	 % of this area activated 
+4.4 	  voxel =  	 19.3 	      % in  	   left 	  Area FG4 	   1.8 	 % of this area activated 
+2.1 	  voxel =  	 9.3 	      % in  	   left 	  Area hOc4la 	   0.8 	 % of this area activated 
+
+14.3 	  voxel =  	 62.0 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	 -54	 -70	 -14 		MNI: 	 -54	 -66	 -19		N/A	 -> Assigned to 	 left	 Area FG2  	 
+	Probability for  	 Area FG2       	 42	 %           [	 37	 49	 %] 
+
+
+
+
+
+
+Cluster 6 (19 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+13.1 	  voxel =  	 69.2 	      % in  	   right 	  Area hIP3 (IPS) 	   9.7 	 % of this area activated 
+3.7 	  voxel =  	 19.7 	      % in  	   right 	  Area hIP2 (IPS) 	   6.0 	 % of this area activated 
+1.8 	  voxel =  	 9.4 	      % in  	   right 	  Area 2 	   0.9 	 % of this area activated 
+0.3 	  voxel =  	 1.6 	      % in  	   right 	  Area hIP1 (IPS) 	   0.3 	 % of this area activated 
+
+19.0 	  voxel =  	 99.8 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	  39	 -52	  49 		MNI: 	  39	 -48	  44		R Inferior Parietal Lobule 	 -> Assigned to 	 right	 Area hIP1 (IPS)	 
+	Probability for  	 Area hIP1 (IPS)	 34	 %           [	 17	 58	 %] 
+	Probability for  	 Area hIP2 (IPS)	 28	 %           [	 13	 30	 %] 
+	Probability for  	 Area hIP3 (IPS)	 27	 %           [	  7	 46	 %] 
+
+
+
+
+
+
+Cluster 7 (19 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+0.5 	  voxel =  	 2.7 	      % in  	   left 	  Area PGp (IPL) 	   0.2 	 % of this area activated 
+0.4 	  voxel =  	 1.9 	      % in  	   left 	  Area 7A (SPL) 	   0.1 	 % of this area activated 
+
+0.9 	  voxel =  	 4.7 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	 -30	 -82	  42 		MNI: 	 -30	 -78	  37		L Middle Occipital Gyrus
+	Probability for  	 Area PGp (IPL) 	  9	 %           [	  0	 18	 %] 
+
+
+
+
+
+
+Cluster 8 (17 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+0.7 	  voxel =  	 4.1 	      % in  	   right 	  Area PGp (IPL) 	   0.2 	 % of this area activated 
+
+0.7 	  voxel =  	 4.1 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	  36	 -82	  42 		MNI: 	  36	 -78	  37		R Middle Occipital Gyrus
+	Probability for  	 Area PGp (IPL) 	 24	 %           [	 14	 36	 %] 
+
+
+
+
+
+
+Cluster 9 (15 vox): corrImg_rel-dist_irrel-time_cdist_p_cluster_mask  ( > 0.00)
+
+6.3 	  voxel =  	 42.2 	      % in  	   left 	  Area 7A (SPL) 	   1.7 	 % of this area activated 
+3.8 	  voxel =  	 25.2 	      % in  	   left 	  Area hIP3 (IPS) 	   2.8 	 % of this area activated 
+2.5 	  voxel =  	 16.8 	      % in  	   left 	  Area 7PC (SPL) 	   5.0 	 % of this area activated 
+2.0 	  voxel =  	 13.1 	      % in  	   left 	  Area PGa (IPL) 	   1.0 	 % of this area activated 
+0.3 	  voxel =  	 1.7 	      % in  	   left 	  Area hIP1 (IPS) 	   0.2 	 % of this area activated 
+
+14.9 	  voxel =  	 99.0 	      % of the cluster volume are assigned in total
+
+
+
+
+Maximum 01	 STAT = 1.00	 X / Y / Z =  	 -39	 -58	  59 		MNI: 	 -39	 -54	  54		L Inferior Parietal Lobule 	 -> Assigned to 	 left	 Area 7A (SPL)	 
+	Probability for  	 Area 7A (SPL)  	 29	 %           [	 11	 35	 %] 
+	Probability for  	 Area hIP3 (IPS)	 19	 %           [	  0	 32	 %] 
+	Probability for  	 Area 7PC (SPL) 	 18	 %           [	 14	 25	 %] 
+	Probability for  	 Area PGa (IPL) 	 16	 %           [	 10	 25	 %] 
+	Probability for  	 Area hIP1 (IPS)	 15	 %           [	  0	 33	 %] 
+	Probability for  	 Area hIP2 (IPS)	  7	 %           [	  0	 17	 %] 
+	Probability for  	 Area PFm (IPL) 	  5	 %           [	  0	 11	 %] 
+
+
+
+
+
+

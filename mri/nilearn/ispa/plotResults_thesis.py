@@ -13,21 +13,21 @@ from nilearn.plotting import plot_stat_map
 from nilearn.image import load_img, new_img_like, threshold_img, math_img
 from nilearn._utils.niimg_conversions import _safe_get_data
 import numpy as np
-from nistats.reporting import compare_niimgs
+#from nistats.reporting import compare_niimgs
 
 if platform == 'darwin':
-	experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath/')
+	experiment_dir = abspath('/Volumes/Seagate/Backups/16102020/data/timePath/derivatives')
 else:
 	experiment_dir = abspath('/mnt/work/achtzehnj/data')
 
 nilearn_dir = opj(experiment_dir, 'nilearn')
 results_dir = opj(nilearn_dir, 'group_results_ispa_std')
-thesis_dir = abspath('/Users/jachtzehn/Documents/Medizin/thesis/figures/results/fmri')
+thesis_dir = abspath('/Users/jachtzehn/Desktop')
 
 # ---- options ----
 colormap = 'viridis'
 output_name = '_group_level_mvpa_masked_gb'
-output_format = 'pdf'
+output_format = 'png'
 dpi = 300
 conditions_to_decode = [['time', 'dist'], ['time', 'dots'], ['dist', 'dots'], ['time', 'lumin'], ['dist', 'lumin'], ['dots', 'lumin']]
 mask_img = True     # mask image with cluster mask?
@@ -65,7 +65,7 @@ def plotGlassBrains():
 		mask = load_img(mask_fname)
 
 		# 1. plot significant cluster
-		fig, ax = plt.subplots(1, 1, figsize=(15, 4), constrained_layout=False)
+		#fig, ax = plt.subplots(1, 1, figsize=(15, 4), constrained_layout=False)
 
 		if len(condition_pair) > 1:
 			split_dir = opj(results_dir, condition_pair[0] + '-vs-' + condition_pair[1])
@@ -101,26 +101,26 @@ def plotGlassBrains():
 		norm = mpl.colors.Normalize(vmin=0.0292, vmax=0.15)
 		cmap_orig = mpl.cm.get_cmap(colormap)
 
-		plot_glass_brain(img, display_mode='lyrz', colorbar=False, vmin=0.0292, cmap=cmap_orig, figure=fig, axes=ax)
+		plot_glass_brain(img, colorbar=False, vmin=0.0292, cmap=cmap_orig)
 
 		# add custom cbar
-		fig.subplots_adjust(right=0.8)
-		cbar_ax = fig.add_axes([0.95, 0.15, 0.01, 0.7])
-		cb1 = mpl.colorbar.ColorbarBase(cbar_ax, cmap=cmap_orig,
-		                                norm=norm,
-		                                orientation='vertical')
-		cbar_ax.yaxis.set_ticks_position('left')
-		cbar_ax.yaxis.set_ticks([0.0292, 0.05, 0.075, 0.1, 0.125, 0.15])
-		cbar_ax.yaxis.set_ticklabels([r'2.9$\%$', r'5$\%$', r'7.5$\%$', r'10$\%$', r'12.5$\%$', r'15$\%$'])
+		# fig.subplots_adjust(right=0.8)
+		# cbar_ax = fig.add_axes([0.95, 0.15, 0.01, 0.7])
+		# cb1 = mpl.colorbar.ColorbarBase(cbar_ax, cmap=cmap_orig,
+		#                                 norm=norm,
+		#                                 orientation='vertical')
+		# cbar_ax.yaxis.set_ticks_position('left')
+		# cbar_ax.yaxis.set_ticks([0.0292, 0.05, 0.075, 0.1, 0.125, 0.15])
+		# cbar_ax.yaxis.set_ticklabels([r'2.9$\%$', r'5$\%$', r'7.5$\%$', r'10$\%$', r'12.5$\%$', r'15$\%$'])
 
 		#plt.tight_layout()
-		plt.savefig(opj(results_dir, output_fname + '.' + output_format), fig=fig, dpi=dpi, format=output_format)
-		plt.savefig(opj(thesis_dir, condition_pair[0] + '-vs-' + condition_pair[1] + '.' + output_format), fig=fig, dpi=dpi, format=output_format, bbox_inches='tight')
+		plt.savefig(opj(results_dir, output_fname + '.' + output_format), dpi=dpi, format=output_format)
+		#plt.savefig(opj(thesis_dir, condition_pair[0] + '-vs-' + condition_pair[1] + '.' + output_format), fig=fig, dpi=dpi, format=output_format, bbox_inches='tight')
 		print('Written image: ' + str(opj(results_dir, output_fname + '.' + output_format)))
 		plt.close()
 
 
-# plotGlassBrains()
+plotGlassBrains()
 
 def plotAnatSlices(condition, coordinates, clustername):
 
@@ -165,13 +165,13 @@ def plotAnatSlices(condition, coordinates, clustername):
 #plotAnatSlices(['time', 'dots'], (-36, -54, 54), 'ips')
 #plotAnatSlices(['time', 'dots'], (-64, -45, 37), 'supramarg')
 
-def compareNiiImgs(img1, img2):
-	#masker = NiftiMasker(mask_img=mask_filename, standardize=True, detrend=False)       # create nifti masker (2D array ready) from mask file
-
-	compare_niimgs(img1, img2, masker=mask,
-	               ref_label='img1', src_label='img2')
-
-	plt.show()
+# def compareNiiImgs(img1, img2):
+# 	#masker = NiftiMasker(mask_img=mask_filename, standardize=True, detrend=False)       # create nifti masker (2D array ready) from mask file
+#
+# 	compare_niimgs(img1, img2, masker=mask,
+# 	               ref_label='img1', src_label='img2')
+#
+# 	plt.show()
 
 
 #compareNiiImgs(opj(results_dir, 'dist-vs-dots', 'snpm_batch', 'SnPM_filtered_masked_accuracy.nii'), opj(results_dir, 'time-vs-dots', 'snpm_batch', 'SnPM_filtered_masked_accuracy.nii'))
