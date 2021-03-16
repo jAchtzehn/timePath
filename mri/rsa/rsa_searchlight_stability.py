@@ -35,11 +35,11 @@ subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 2
 # [1, 2, 3, 5, 8, 10, 11, 13, 15, 16, 18, 20, 21, 22, 25]                                               # the rest
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]               # all except 15
 conditions = ['time', 'dist', 'dots']
-masks = ['ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'lingual_lh', 'lingual_rh']
+masks = ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
 # ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'hc_lh', 'hc_rh', 'insula_lh', 'insula_rh']
 # ['ips_lh', 'ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh']
 file_suffix = ''
-plot_html = False
+plot_html = True
 group_level = True
 save_figs = True
 sl_radius = 6
@@ -84,15 +84,12 @@ for space in spaces:
             # -- data loading
             data_path = opj(nilearn_dir, subj_str, 'space-' + space, 'betas', subj_str + '_betas_merged.nii.gz')
             behav_path = opj(nilearn_dir, subj_str, 'space-' + space, 'betas', subj_str + '_merged_events.tsv')
-            # if roi == 'V5_rh' or roi == 'V5_lh':
-            #     mask_path = opj(nilearn_dir, 'group_masks', 'space-' + space,
-            #                         'group_mask_' + roi + '_binarized.nii.gz')  # mask filename
-            # else:
-            #     mask_path = opj(nilearn_dir, subj_str, 'space-' + space, 'masks',
-            #                         subj_str + '_' + roi + '_mask_binarized.nii.gz')  # mask filename
-
-            mask_path = opj(nilearn_dir, 'group_masks', 'space-' + space,
-                                                     'group_mask_univariate_' + roi + '.nii.gz')
+            if roi == 'V5_rh' or roi == 'V5_lh':
+                mask_path = opj(nilearn_dir, 'group_masks', 'space-' + space,
+                                    'group_mask_' + roi + '_binarized.nii.gz')  # mask filename
+            else:
+                mask_path = opj(nilearn_dir, subj_str, 'space-' + space, 'masks',
+                                    subj_str + '_' + roi + '_mask_binarized.nii.gz')  # mask filename
 
             anat_path = opj(experiment_dir, 'derivatives', 'templates', 'mni_1mm', '1mm_T1.nii.gz')
             

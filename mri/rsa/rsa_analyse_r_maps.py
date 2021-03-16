@@ -16,11 +16,11 @@ from nilearn.plotting import plot_glass_brain
 import seaborn as sns
 sns.set_theme(style="darkgrid")
 from multiprocessing import Pool
-from scipy import ndimage
+
 
 # ------------ File I/O ------------
-experiment_dir = abspath('/home/achtzehnj/data/timePath/')
-#experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath')
+#experiment_dir = abspath('/home/achtzehnj/data/timePath/')
+experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath')
 
 rsa_dir = opj(experiment_dir, 'derivatives', 'rsa')
 behav_file = opj(experiment_dir, 'derivatives', 'behavioural', 'pse_data_cross_dim_individual_norm.tsv')
@@ -28,11 +28,11 @@ behav_data = pd.read_csv(behav_file, delimiter='\t')
 mask_img = load_img(opj(experiment_dir, 'derivatives', 'rsa', 'group_mask_wb_binarized.nii.gz'))
 
 # ------------ options ------------
-subjects = [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
 conditions = ['time', 'dist', 'dots']
 
 masker = NiftiMasker(mask_img=mask_img, standardize=False, detrend=False,
-                     memory=abspath('/home/achtzehnj/code/nilearn_utilities/cache'), memory_level=1)
+                     memory=abspath('/Users/jachtzehn/data/fMRI/nilearn_cache'), memory_level=1)
 
 # compute mean consistency map
 # cons_imgs = []
@@ -66,9 +66,10 @@ def calc_crossDim(condition_pair):
 	# now load up each participant's RDM map and correlate
 	rdm_dim_data = np.zeros((len(subjects), 64291))
 
+
 	for s, subjectID in enumerate(subjects):
 		rdm_map = load_img(opj(rsa_dir, 'sub-' + str(subjectID).zfill(2), 'space-MNI152NLin2009cAsym', 'results',
-		                       'sub-' + str(subjectID).zfill(2) + '_space-MNI152NLin2009cAsym_cdist_wb_rdm_values.nii.gz'), )
+		                       'sub-' + str(subjectID).zfill(2) + '_space-MNI152NLin2009cAsym_wb_rdm_values.nii.gz'), )
 
 		# extract right 4D volume from nifti file (0 = time vs. space, 1 = time vs. num, 2 = space vs. num
 		rdm_map_dim = index_img(rdm_map, dimId)
@@ -88,15 +89,15 @@ def calc_crossDim(condition_pair):
 	for vx in vbar:
 		[vx_corr_r, vx_corr_p] = stats.spearmanr(rdm_dim_data[:, vx], crossDim.T)
 		corr_data[0, vx] = vx_corr_r
-		if vx_corr_p <= 0.05 and cons_data[0, vx] > 0.25:
+		if vx_corr_p <= 0.05 and cons_data[0, vx] >= 0.3:
 			corr_data_p[0, vx] = vx_corr_r
 	corr_data = corr_data * np.abs(cons_data_norm)
 
-	sns.regplot(x=rdm_dim_data[:, np.abs(corr_data_p).argmax()], y=crossDim.T)
+	sns.regplot(x=rdm_dim_data[:, corr_data_p.argmin()], y=crossDim.T)
 	plt.xlabel('RDM')
 	plt.ylabel('CrossDim')
 	plt.title('rel-{}_irrel-{}'.format(condition_pair[0], condition_pair[1]))
-	plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_cdist_corr_plot.pdf'.format(condition_pair[0], condition_pair[1])), format='pdf')
+	plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_corr_plot.pdf'.format(condition_pair[0], condition_pair[1])), format='pdf')
 	plt.close()
 
 	# zscore data
@@ -108,19 +109,14 @@ def calc_crossDim(condition_pair):
 
 	[corr_img_thresh, th] = threshold_stats_img(corr_img_z, cluster_threshold=5, alpha=0.05, height_control='fdr')
 
-	corr_img_p_data = corr_img_p.get_data()
-	corr_max = ndimage.maximum_position(corr_img_p_data)
-	corr_min = ndimage.minimum_position(corr_img_p_data)
-	print('{} on {}, max: {}, min: {}'.format(condition_pair[0], condition_pair[1], corr_max, corr_min))
-
 	plot_glass_brain(corr_img_p, colorbar=True, cmap='viridis', plot_abs=False, vmax=1, symmetric_cbar=False)
-	plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_cdist_p.pdf'.format(condition_pair[0], condition_pair[1])), format='pdf')
+	plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_p.pdf'.format(condition_pair[0], condition_pair[1])), format='pdf')
 	plt.close()
 
 	# corr_img_thresh.to_filename(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_thresh.nii.gz'.format(condition_pair[0], condition_pair[1])))
-	corr_img.to_filename(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_cdist.nii.gz'.format(condition_pair[0], condition_pair[1])))
+	corr_img.to_filename(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}.nii.gz'.format(condition_pair[0], condition_pair[1])))
 	corr_img_p.to_filename(
-		opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_cdist_p.nii.gz'.format(condition_pair[0], condition_pair[1])))
+		opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_p.nii.gz'.format(condition_pair[0], condition_pair[1])))
 
 pool = Pool(6)
 pool.map(calc_crossDim, itertools.permutations(conditions, 2))
