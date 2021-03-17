@@ -34,7 +34,6 @@ conditions = ['time', 'dist', 'dots']
 masker = NiftiMasker(mask_img=mask_img, standardize=False, detrend=False,
                      memory=abspath('/Users/jachtzehn/data/fMRI/nilearn_cache'), memory_level=1)
 
-
 for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
 
     condition_str = 'rel-' + condition_pair[0] + '_irrel-' + condition_pair[1]
@@ -79,10 +78,8 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
         else:
             rdm_value = rdm_img.get_data()[min_vx_loc[0], min_vx_loc[1], min_vx_loc[2]]
 
-
         rdms_crossDim[0, i] = rdm_value[0]
         rdms_mean[:, i] = rdm_value
-
 
     [vx_corr_r, vx_corr_p] = stats.spearmanr(crossDim, rdms_crossDim.reshape(-1))
     print('{}, {}'.format(vx_corr_r, vx_corr_p))

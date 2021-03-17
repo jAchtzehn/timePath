@@ -39,9 +39,10 @@ subjects = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 2
 # [1, 2, 3, 5, 8, 10, 11, 13, 15, 16, 18, 20, 21, 22, 25]                                               # the rest
 # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]               # all except 15
 conditions = ['time', 'dist', 'dots']
-file_suffix = 'cdist'
+file_suffix = 'cdist_even'
 sl_radius = 3
 spaces = ['MNI152NLin2009cAsym']
+runs_odd = [2, 4, 6, 8]
 
 os.system('clear')                              # clean up terminal
 # if file_suffix is empty, add _
@@ -101,6 +102,10 @@ for space in spaces:
             if cond not in conditions:
                 fmri_data = fmri_data[fmri_data.sa.targets != cond]      # remove cross from the conditions (targets)
 
+        #a = runs.any(runs_odd)
+        # remove even runs
+        fmri_data = fmri_data[[True if x in runs_odd else False for x in fmri_data.sa.runs]]
+
         # -- computation
         # first compute RDMs
         mtgs = mean_group_sample(['targets'])       # create the mean of all trials
@@ -113,9 +118,15 @@ for space in spaces:
         slres = sl(mtds)
 
         rdm_data_new_order = np.zeros(shape=(3, len(slres.samples[0, :])))
+        # cdist
         rdm_data_new_order[0, :] = slres.samples[2, :]  # time vs. dist
         rdm_data_new_order[1, :] = slres.samples[5, :]  # time vs. dots
         rdm_data_new_order[2, :] = slres.samples[1, :]  # dots vs dist
+
+        # pdist
+        # rdm_data_new_order[0, :] = slres.samples[1, :]  # time vs. dist
+        # rdm_data_new_order[1, :] = slres.samples[2, :]  # time vs. dots
+        # rdm_data_new_order[2, :] = slres.samples[0, :]  # dots vs dist
 
         rdm_data_new_order = np.nan_to_num(rdm_data_new_order)
 
