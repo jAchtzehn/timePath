@@ -7,32 +7,33 @@ from nilearn._utils.niimg import _safe_get_data
 
 import numpy as np
 
-atlas_img_path = abspath('/Users/jachtzehn/data/fMRI/atlases/100um/Synthesized_FLASH25_in_MNI_v2_200um.nii.gz')
-atlas_img = load_img(atlas_img_path)
-atlas_img = threshold_img(atlas_img, 9.)
+#atlas_img_path = abspath('/Users/jachtzehn/data/fMRI/atlases/100um/Synthesized_FLASH25_in_MNI_v2_200um.nii.gz')
+#atlas_img = load_img(atlas_img_path)
+#atlas_img = threshold_img(atlas_img, 9.)
 
+stat_img_fname = abspath('/Users/jachtzehn/Desktop/mask_thr.nii.gz')
 
-
-stat_img_fname = abspath('/Users/jachtzehn/data/fMRI/timePath/derivatives/rsa/corrImg_rel-time_irrel-dist_cdist_p.nii.gz')
 stat_img = load_img(stat_img_fname)
-stat_img__ = threshold_img(stat_img, threshold=-1, mask_img='/Users/jachtzehn/data/fMRI/timePath/derivatives/rsa/corrImg_rel-time_irrel-dist_cdist_p_cluster_mask.nii')
+#stat_img__ = threshold_img(stat_img, threshold=-1, mask_img='/Users/jachtzehn/data/fMRI/timePath/derivatives/rsa/corrImg_rel-time_irrel-dist_cdist_p_cluster_mask.nii')
 
-plot_stat_map(stat_img__, black_bg=True, cut_coords=[-39, -63, 1.2], draw_cross=True, bg_img=atlas_img,
-              cmap='viridis', vmin=-1, vmax=1, colorbar=True, dim=0)
+plot_glass_brain(stat_img, cmap='Dark2', colorbar=False)
 
-plt.savefig('/Users/jachtzehn/Desktop/corrImg_rel-time_irrel-dist_200um_thresholded.pdf', dpi=500, format='pdf')
+# plot_stat_map(stat_img__, black_bg=True, cut_coords=[-39, -63, 1.2], draw_cross=True, bg_img=atlas_img,
+#               cmap='viridis', vmin=-1, vmax=1, colorbar=True, dim=0)
+
+plt.savefig('/Users/jachtzehn/Desktop/mask.pdf', dpi=500, format='pdf')
 plt.close()
 
 
-stat_img_fname = abspath('/Users/jachtzehn/data/fMRI/timePath/derivatives/rsa/corrImg_rel-dist_irrel-time_cdist_p.nii.gz')
-stat_img = load_img(stat_img_fname)
-stat_img__ = threshold_img(stat_img, threshold=-1, mask_img='/Users/jachtzehn/data/fMRI/timePath/derivatives/rsa/corrImg_rel-dist_irrel-time_cdist_p_cluster_mask.nii')
+#stat_img_fname = abspath('/Users/jachtzehn/data/fMRI/timePath/derivatives/rsa/corrImg_rel-dist_irrel-time_cdist_p.nii.gz')
+#stat_img = load_img(stat_img_fname)
+#stat_img__ = threshold_img(stat_img, threshold=-1, mask_img='/Users/jachtzehn/data/fMRI/timePath/derivatives/rsa/corrImg_rel-dist_irrel-time_cdist_p_cluster_mask.nii')
 
-plot_stat_map(stat_img__, black_bg=True, cut_coords=[-27, -78, 44], draw_cross=True, bg_img=atlas_img,
-              cmap='viridis', vmin=-1, vmax=1, colorbar=True, dim=0)
+#plot_stat_map(stat_img__, black_bg=True, cut_coords=[-27, -78, 44], draw_cross=True, bg_img=atlas_img,
+#              cmap='viridis', vmin=-1, vmax=1, colorbar=True, dim=0)
 
-plt.savefig('/Users/jachtzehn/Desktop/corrImg_rel-dist_irrel-time_200um_thresholded.pdf', dpi=500, format='pdf')
-plt.close()
+#plt.savefig('/Users/jachtzehn/Desktop/corrImg_rel-dist_irrel-time_200um_thresholded.pdf', dpi=500, format='pdf')
+#plt.close()
 
 
 

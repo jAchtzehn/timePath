@@ -17,17 +17,17 @@ rsa_dir = opj(experiment_dir, 'derivatives', 'rsa')
 
 
 conImgs = {}
-for contrast in [11, 13, 15]:
+conFolder = abspath('/Users/jachtzehn/Documents/DZNE/timePath/paper/figures/fig3/')
 
-	conFolder = '/Volumes/Seagate/Backups/16102020/data/timePath/derivatives/output_nipype/2ndlevel/space-MNI152NLin2009cAsym/contrast-00' + str(contrast)
+for contrast in ['dotsvslumin', 'distvslumin', 'timevslumin']:
 
-	fslcmd = 'fslmaths ' + opj(conFolder, 'spmT_0001_thr.nii') + ' -nan ' + opj(conFolder, 'spmT_0001_thr_nan_zero.nii')
-	conImgs[str(contrast)] = opj(conFolder, 'spmT_0001_thr_nan_zero.nii')
+	fslcmd = 'fslmaths ' + opj(conFolder, contrast + '_thrSPM.nii') + ' -nan ' + opj(conFolder, contrast + '_thrSPM_nan_zero.nii')
+	conImgs[contrast] = opj(conFolder, contrast + '_thrSPM_nan_zero.nii')
 	os.system(fslcmd)
 	print('Running {}'.format(fslcmd))
 
 
-fslcmd = 'fslmaths ' + conImgs['11'] + ' -add ' + conImgs['13'] + ' -add ' + conImgs['15'] + ' /Users/jachtzehn/Desktop/mask.nii'
+fslcmd = 'fslmaths ' + conImgs['dotsvslumin'] + ' -add ' + conImgs['distvslumin'] + ' -add ' + conImgs['timevslumin'] + ' /Users/jachtzehn/Desktop/mask.nii'
 print('Running {}'.format(fslcmd))
 os.system(fslcmd)
 
