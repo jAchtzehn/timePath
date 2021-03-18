@@ -40,10 +40,10 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
 
     # first plot glassbrain plots
 
-    corr_img = load_img(opj(rsa_dir, 'corrImg_' + condition_str + '_cdist_p.nii.gz'))
+    corr_img = load_img(opj(rsa_dir, 'corrImg_' + condition_str + '_even.nii.gz'))
     corr_values = masker.fit_transform(corr_img)
 
-    corr_mask_img = load_img(opj(rsa_dir,  'corrImg_' + condition_str + '_cdist_p_cluster_mask.nii'))
+    corr_mask_img = load_img(opj(rsa_dir,  'corrImg_' + condition_str + '_p_odd_cluster_mask.nii'))
 
     corr_img_masked = threshold_img(corr_img, mask_img=corr_mask_img, threshold=-1)
 
@@ -59,6 +59,7 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     min_vx_loc = ndimage.minimum_position(corr_img_masked.get_data())
     min_mni_loc = coord_transform(min_vx_loc[0], min_vx_loc[1], min_vx_loc[2], corr_img_masked.affine)
 
+    print(condition_str)
     print(max_mni_loc)
     print(min_mni_loc)
 
@@ -66,12 +67,12 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     crossDim = behav_data['pse_diff'][(behav_data.condition_rel == condition_pair[0]) &
                                       (behav_data.condition_irrel == condition_pair[1])].values
 
-    rdms_mean = np.zeros(shape=(3, 24))
+    rdms_mean = np.zeros(shape=(3, 23))
     rdms_crossDim = np.zeros(shape=(1, 23))
     for i, sub in enumerate(subjects):
         sub_str = 'sub-' + str(sub).zfill(2)
 
-        rdm_img = load_img(opj(rsa_dir, sub_str, 'space-MNI152NLin2009cAsym', 'results', sub_str + '_space-MNI152NLin2009cAsym_cdist_wb_rdm_values.nii.gz'))
+        rdm_img = load_img(opj(rsa_dir, sub_str, 'space-MNI152NLin2009cAsym', 'results', sub_str + '_space-MNI152NLin2009cAsym_cdist_even_wb_rdm_values.nii.gz'))
 
         if x == 1:
             rdm_value = rdm_img.get_data()[max_vx_loc[0], max_vx_loc[1], max_vx_loc[2]]
@@ -84,12 +85,12 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     [vx_corr_r, vx_corr_p] = stats.spearmanr(crossDim, rdms_crossDim.reshape(-1))
     print('{}, {}'.format(vx_corr_r, vx_corr_p))
 
-    # plot RDM
-    # plotting
-    mean_rdm = np.mean(rdms_mean, axis=1)
-
-    mean_rdm_sq = squareform(mean_rdm)
-
+    # # plot RDM
+    # # plotting
+    # mean_rdm = np.mean(rdms_mean, axis=1)
+    #
+    # mean_rdm_sq = squareform(mean_rdm)
+    #
     # fig, ax = plt.subplots(1, 1, figsize=(10, 10))
     #
     # rdm_plot = ax.imshow(mean_rdm_sq, interpolation='nearest')
@@ -97,7 +98,7 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     # cax = div.append_axes("right", size="5%", pad=0.2)
     # cbar = plt.colorbar(rdm_plot, cax=cax)
     # cbar.ax.tick_params(labelsize=16)
-    # rdm_plot.set_clim(vmin=0, vmax=np.max(1.6))
+    # rdm_plot.set_clim(vmin=0, vmax=np.max(1.7))
     #
     # mlabels = ['time', 'space', 'numerosity']
     # ax.set_xticklabels(mlabels, fontdict=None, minor=False, rotation=-45, fontsize=18)
@@ -114,7 +115,7 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     # plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_corr_plot_max_rdm.pdf'.format(condition_pair[0], condition_pair[1])),
     #                format='pdf')
     # plt.close()
-
+    #
 
     # sns.set_theme(style="darkgrid")
     #
