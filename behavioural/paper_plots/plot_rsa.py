@@ -43,13 +43,17 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     corr_img = load_img(opj(rsa_dir, 'corrImg_' + condition_str + '_even.nii.gz'))
     corr_values = masker.fit_transform(corr_img)
 
-    corr_mask_img = load_img(opj(rsa_dir,  'corrImg_' + condition_str + '_p_odd_cluster_mask.nii'))
+    if x == 1:
+        corr_mask_img = load_img(opj(rsa_dir,  'corrImg_' + condition_str + '_p_odd_cluster_mask_2nd.nii'))
+    else:
+        corr_mask_img = load_img(opj(rsa_dir,  'corrImg_' + condition_str + '_p_odd_cluster_mask.nii'))
+
 
     corr_img_masked = threshold_img(corr_img, mask_img=corr_mask_img, threshold=-1)
 
     plot_glass_brain(corr_img_masked, colorbar=True, cmap='viridis', vmin=-1, vmax=1, plot_abs=False)
 
-    plt.savefig(opj(rsa_dir, 'corrImg_' + condition_str + '_glassBrain_thresholded.pdf'), dpi=400, format='pdf')
+    plt.savefig(opj(rsa_dir, 'corrImg_' + condition_str + '_glassBrain_thresholded_1st.pdf'), dpi=400, format='pdf')
     plt.close()
 
     # plot RDM of maximum correlation voxel
@@ -85,36 +89,37 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     [vx_corr_r, vx_corr_p] = stats.spearmanr(crossDim, rdms_crossDim.reshape(-1))
     print('{}, {}'.format(vx_corr_r, vx_corr_p))
 
+    #corr_img_masked.to_filename(opj(rsa_dir, 'corr_img_nifti.nii.gz'))
     # # plot RDM
     # # plotting
-    # mean_rdm = np.mean(rdms_mean, axis=1)
-    #
-    # mean_rdm_sq = squareform(mean_rdm)
-    #
-    # fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-    #
-    # rdm_plot = ax.imshow(mean_rdm_sq, interpolation='nearest')
-    # div = make_axes_locatable(ax)
-    # cax = div.append_axes("right", size="5%", pad=0.2)
-    # cbar = plt.colorbar(rdm_plot, cax=cax)
-    # cbar.ax.tick_params(labelsize=16)
-    # rdm_plot.set_clim(vmin=0, vmax=np.max(1.7))
-    #
-    # mlabels = ['time', 'space', 'numerosity']
-    # ax.set_xticklabels(mlabels, fontdict=None, minor=False, rotation=-45, fontsize=18)
-    # ax.set_xticks(range(len(mlabels)))
-    # ax.set_yticklabels(mlabels, fontdict=None, minor=False, fontsize=18)
-    # ax.set_yticks(range(len(mlabels)))
-    #
-    # for i in range(len(mean_rdm_sq)):
-    #     for j in range(len(mean_rdm_sq)):
-    #         if i != j:
-    #             ax.text(j, i, '{:.2f}'.format(mean_rdm_sq[i, j]),
-    #                                               ha='center', va='center', color='black', fontsize=18)
-    #
-    # plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_corr_plot_max_rdm.pdf'.format(condition_pair[0], condition_pair[1])),
-    #                format='pdf')
-    # plt.close()
+    mean_rdm = np.mean(rdms_mean, axis=1)
+
+    mean_rdm_sq = squareform(mean_rdm)
+
+    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+
+    rdm_plot = ax.imshow(mean_rdm_sq, interpolation='nearest')
+    div = make_axes_locatable(ax)
+    cax = div.append_axes("right", size="5%", pad=0.2)
+    cbar = plt.colorbar(rdm_plot, cax=cax)
+    cbar.ax.tick_params(labelsize=16)
+    rdm_plot.set_clim(vmin=0, vmax=np.max(1.7))
+
+    mlabels = ['time', 'space', 'numerosity']
+    ax.set_xticklabels(mlabels, fontdict=None, minor=False, rotation=-45, fontsize=18)
+    ax.set_xticks(range(len(mlabels)))
+    ax.set_yticklabels(mlabels, fontdict=None, minor=False, fontsize=18)
+    ax.set_yticks(range(len(mlabels)))
+
+    for i in range(len(mean_rdm_sq)):
+        for j in range(len(mean_rdm_sq)):
+            if i != j:
+                ax.text(j, i, '{:.2f}'.format(mean_rdm_sq[i, j]),
+                                                  ha='center', va='center', color='black', fontsize=18)
+
+    plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_corr_plot_max_rdm_2nd.pdf'.format(condition_pair[0], condition_pair[1])),
+                   format='pdf')
+    plt.close()
     #
 
     # sns.set_theme(style="darkgrid")
@@ -123,6 +128,6 @@ for x, condition_pair in enumerate([['time', 'dist'], ['dist', 'time']]):
     # plt.xlabel('RDM')
     # plt.ylabel('CrossDim')
     # plt.title('rel-{}_irrel-{}'.format(condition_pair[0], condition_pair[1]))
-    # plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_corr_plot_max.pdf'.format(condition_pair[0], condition_pair[1])),
+    # plt.savefig(opj(rsa_dir, 'corrImg_rel-{}_irrel-{}_corr_plot_max_1st.pdf'.format(condition_pair[0], condition_pair[1])),
     #             format='pdf')
     # plt.close()
