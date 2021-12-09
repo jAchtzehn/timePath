@@ -186,7 +186,6 @@ n_level1conest = Node(spm.EstimateContrast(),
 						 name='n_level1conest')
 
 # --- IO stream
-
 # infosource
 n_infosource = Node(IdentityInterface(fields=['subj_id', 'output_space', 'contrasts'], contrasts=contrast_list),
 					   name="n_infosource")

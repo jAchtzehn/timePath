@@ -13,7 +13,7 @@ import pandas as pd
 import scipy.stats as stats
 from statsmodels.stats.multitest import multipletests
 import psignifit as ps
-from utilFunctions import getAvgRespValues, getPsiSignInputData_p, fitPF
+from ..utilFunctions import getAvgRespValues, getPsiSignInputData_p, fitPF
 import pylab as pl
 
 # ------------ options ------------

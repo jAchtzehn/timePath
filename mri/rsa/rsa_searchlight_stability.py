@@ -38,7 +38,7 @@ conditions = ['time', 'dist', 'dots']
 #masks = ['ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'lingual_lh',
  #        'lingual_rh', 'smg_rh', 'postcentral_rh', 'moccg_rh', 'paracentral_lh']
 masks = ['ips_rh', 'ifg_lh', 'ifg_rh', 'V5_lh', 'V5_rh', 'lingual_lh',
-       'lingual_rh', 'smg_rh', 'postcentral_rh', 'moccg_rh', 'paracentral_lh']
+       'lingual_rh', 'smg', 'postcentral_rh', 'moccg_rh', 'paracentral']
 
 file_suffix = ''
 plot_html = False
@@ -321,7 +321,6 @@ for space in spaces:
 				cbar = plt.colorbar(rdm_plot, cax=cax)
 				cbar.ax.tick_params(labelsize=12)
 			rdm_plot.set_clim(vmin=0, vmax=np.max(max_vals))
-
 			if roi_enum == 0:
 				mlabels = ['time', 'space', 'numerosity']
 				ax[subplot_row, subplot_col].set_xticklabels(mlabels, fontdict=None, minor=False, rotation=-45, fontsize=12)
@@ -330,11 +329,11 @@ for space in spaces:
 				ax[subplot_row, subplot_col].set_yticks(range(len(mlabels)))
 			ax[subplot_row, subplot_col].set_title('{}'.format(roi, np.mean(max_cons_allSubj[roi])))
 
-			for i in range(len(rdms_cummulative_allSubj[roi])):
-				for j in range(len(rdms_cummulative_allSubj[roi])):
-					if i != j:
-						ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(rdms_cummulative_allSubj[roi][i, j]),
-						                                  ha='center', va='center', color='black', fontsize=12)
+			# for i in range(len(rdms_cummulative_allSubj[roi])):
+			# 	for j in range(len(rdms_cummulative_allSubj[roi])):
+			# 		if i != j:
+			# 			ax[subplot_row, subplot_col].text(j, i, '{:.2f}'.format(rdms_cummulative_allSubj[roi][i, j]),
+			# 			                                  ha='center', va='center', color='black', fontsize=12)
 		plt.subplots_adjust(wspace=0.5)
-		plt.savefig(opj(group_result_dir, 'RDM_space-' + space + file_suffix + 'searchlight_mean.pdf'), dpi=300)
+		plt.savefig(opj(group_result_dir, 'RDM_space-' + space + file_suffix + 'searchlight_mean_noValues.pdf'), dpi=300)
 		plt.close()

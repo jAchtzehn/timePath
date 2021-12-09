@@ -80,7 +80,6 @@ logging.update_logging(config)
 contrast_ids = [('%04d' % x) for x in contrasts]
 second_level_contrast = ['Group', 'T', ['mean'], [1]]
 
-
 # ------------ Node definition ------------
 # One Sample T-Test Design - creates one sample T-Test Design
 n_onesamplettestdes = Node(OneSampleTTestDesign(),

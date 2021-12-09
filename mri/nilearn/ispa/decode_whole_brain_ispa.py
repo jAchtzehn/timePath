@@ -24,7 +24,7 @@ else:
 	experiment_dir = abspath('/mnt/work/achtzehnj/data/')
 
 nilearn_dir = opj(experiment_dir, 'nilearn')
-results_dir = opj(nilearn_dir, 'group_results_ispa_std_smoothed')
+results_dir = opj(nilearn_dir, 'group_results_ispa_std')
 
 # ------------ options ------------
 settings = {'subjects': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
@@ -36,10 +36,6 @@ settings = {'subjects': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 
             'verbose_decode': 0,
             'smooth_img': True,
             'fwhm': 6}
-
-# [['time', 'dist'], ['time', 'dots'], ['dist', 'dots'], ['time', 'lumin'], ['dist', 'lumin'], ['dots', 'lumin']]  crossDim
-# [['duration'], ['distance'], ['nrdots'], ['speed']]
-# [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
 
 # ------------ code ------------
 # os.system('clear')
