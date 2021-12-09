@@ -20,21 +20,24 @@ import datetime
 # ------------ File I/O ------------
 if platform == 'darwin':
 	experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath/')
+	nilearn_cache_dir = abspath('/home/achtzehnj/code/nilearn_utilities/cache')
 else:
-	experiment_dir = abspath('/mnt/work/achtzehnj/data/')
+	experiment_dir = abspath('/home/achtzehnj/data/timePath/derivatives')
+	nilearn_cache_dir = abspath('/home/achtzehnj/code/nilearn_utilities/cache')
 
 nilearn_dir = opj(experiment_dir, 'nilearn')
 results_dir = opj(nilearn_dir, 'group_results_ispa_std')
 
 # ------------ options ------------
 settings = {'subjects': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
-            'conditions_to_decode': [['time', 'dist'], ['time', 'dots'], ['dist', 'dots'], ['time', 'lumin'], ['dist', 'lumin'], ['dots', 'lumin']],
+            'conditions_to_decode': [['speed']],
+            'speed_conditions_to_decode': ['high', 'low'],
             'n_proc': -1,
             'roi': 'wb',
             'standardize': True,
             'solver': 'lbfgs',
             'verbose_decode': 0,
-            'smooth_img': True,
+            'smooth_img': False,
             'fwhm': 6}
 
 # ------------ code ------------
@@ -75,7 +78,7 @@ for conditions_to_decode in cbar:
 		                                  subj_str + '_merged_events.tsv'), delimiter='\t')
 		behav_data = behav_data.append(subj_behav_data, ignore_index=True)
 
-		subj_func_data = clean_img(opj(nilearn_dir, subj_str, 'space-MNI152NLin2009cAsym', 'betas', subj_str + '_betas_merged_warningRegr.nii.gz'),
+		subj_func_data = clean_img(opj(nilearn_dir, subj_str, 'space-MNI152NLin2009cAsym', 'betas', subj_str + '_betas_merged.nii.gz'),
 		                           standardize=settings['standardize'], ensure_finite=True, detrend=False, mask_img=None)
 		func_data_list.append(subj_func_data)
 
@@ -88,7 +91,7 @@ for conditions_to_decode in cbar:
 		if conditions_to_decode[0] is not 'speed':
 			conditions_mask = behav_data.trial.isin(['time', 'dist', 'dots', 'lumin'])
 		else:
-			conditions_mask = np.logical_and(behav_data.trial.isin(['time', 'dist', 'dots', 'lumin']), behav_data.speed.isin(['high', 'low']))
+			conditions_mask = np.logical_and(behav_data.trial.isin(['time', 'dist', 'dots', 'lumin']), behav_data.speed.isin(settings['speed_conditions_to_decode']))
 
 	fmri_data = index_img(fmri_data, conditions_mask)
 	behav_data = behav_data[conditions_mask]
@@ -130,8 +133,12 @@ for conditions_to_decode in cbar:
 			img_name = 'ispa_sl_wb_decoding-{}-vs-{}_split-{:02d}.nii'.format(
 				conditions_to_decode[0], conditions_to_decode[1], split_idx)
 		else:
-			img_name = 'ispa_sl_wb_decoding-{}_split-{:02d}.nii'.format(
-				conditions_to_decode[0], split_idx)
+			if conditions_to_decode[0] is not 'speed':
+				img_name = 'ispa_sl_wb_decoding-{}_split-{:02d}.nii'.format(
+					conditions_to_decode[0], split_idx)
+			else:
+				img_name = 'ispa_sl_wb_decoding-speed-{}-vs-{}_split-{:02d}.nii'.format(
+					settings['speed_conditions_to_decode'][0], settings['speed_conditions_to_decode'][1], split_idx)
 		searchlight_img = new_img_like(mean_fmri, searchlight.scores_ - 0.5)
 		searchlight_img.to_filename(opj(condition_results_dir, img_name))
 
