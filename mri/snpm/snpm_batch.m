@@ -2,7 +2,7 @@
 % 
 % % Authors : Qi WANG (qiqi.wang@lis-lab.fr)
 
-conditions = {'speed_high-vs-low'};
+conditions = {'time-vs-dist'};
 fwe = 0.05;
 Nperm = 1000;
 k = 10;          % minimal cluster size
@@ -17,7 +17,7 @@ for condition = conditions
     splits = [0:23];
     files=[];
     for split = splits
-        input_filename = sprintf('ispa_sl_wb_decoding-speed-high-vs-low_split-%02d', split);
+        input_filename = sprintf('ispa_sl_wb_decoding-%s_split-%02d', condition{1}, split);
         files = [files; cellstr(sprintf('%s/%s.nii', resultdir, input_filename))];
     end
 
