@@ -2,13 +2,13 @@
 % 
 % % Authors : Qi WANG (qiqi.wang@lis-lab.fr)
 
-conditions = {'time-vs-lumin', 'time-vs-dist', 'time-vs-dots','dist-vs-dots', 'dist-vs-lumin', 'dots-vs-lumin'};
+conditions = {'speed_high-vs-low'};
 fwe = 0.05;
 Nperm = 1000;
 k = 10;          % minimal cluster size
 
 for condition = conditions
-    resultdir = sprintf('/Users/jachtzehn/data/fMRI/timePath/nilearn/group_results_ispa_std/%s', condition{1});
+    resultdir = sprintf('/home/achtzehnj/data/timePath/derivatives/nilearn/group_results_ispa_std/%s', condition{1});
     snpm_dirname = sprintf('snpm_batch');
     outputdir = sprintf('%s/%s', resultdir, snpm_dirname);
     snpmfig = sprintf('%s/%s', outputdir, snpm_dirname);
@@ -17,7 +17,7 @@ for condition = conditions
     splits = [0:23];
     files=[];
     for split = splits
-        input_filename = sprintf('ispa_sl_wb_decoding-%s_split-%02d', condition{1}, split);
+        input_filename = sprintf('ispa_sl_wb_decoding-speed-high-vs-low_split-%02d', split);
         files = [files; cellstr(sprintf('%s/%s.nii', resultdir, input_filename))];
     end
 
