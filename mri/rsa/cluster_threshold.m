@@ -1,13 +1,14 @@
 experiment_dir = fullfile('/home/achtzehnj/data/timePath/')
 rsa_dir = fullfile(experiment_dir, 'derivatives', 'rsa')
 
+cluster_size = 5;
 % cluster removal from https://en.wikibooks.org/wiki/SPM/How-to#How_to_remove_clusters_under_a_certain_size_in_a_binary_mask?
 ROI  = sprintf('%s/corrImg_rel-time_irrel-dist_p_odd_cluster_mask.nii', rsa_dir);  % input image (binary, ie a mask)
 
 %-Connected Component labelling
 V = spm_vol(ROI);
 dat = spm_read_vols(V);
-[l2, num] = spm_bwlabel(double(dat>0),26);
+[l2, num] = spm_bwlabel(double(dat>0), cluster_size);
 if ~num, warning('No clusters found.'); end
 
 %-Extent threshold, and sort clusters according to their extent
