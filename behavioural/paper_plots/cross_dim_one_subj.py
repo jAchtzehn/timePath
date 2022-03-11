@@ -75,9 +75,9 @@ styles = {'time': ['v-', 'SkyBlue', 'full'],
 create_html = True
 
 # ------------ File I/O ------------
-experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath/')
+experiment_dir = abspath('/Users/jachtzehn/data/fMRI/timePath/derivatives')
 behavioral_dir = opj(experiment_dir, 'behavioural')
-output_dir = abspath('/Users/jachtzehn/Documents/Medizin/thesis/figures/results/behavioural')
+output_dir = abspath('/Users/jachtzehn/Documents/papers/dzne/time_space_numerosity')
 
 
 if calc_crossDim_pse:
@@ -167,7 +167,7 @@ if calc_crossDim_pse:
 					options_res = result['options']
 
 					xData = data[:, 0]
-					yData = data[:, 1] / data[:, 2]
+					yData = data[:, 1]
 					xMin = min(xData)
 					xMax = max(xData)
 					xLength = xMax - xMin
@@ -187,30 +187,35 @@ if calc_crossDim_pse:
 					                       result['conf_Intervals'][1][1]]
 
 					if idx_compVal_irrel == 0:
-						ax.plot(x, fitValues, color='GoldenRod', linewidth=lw, label='after short distances (low)')
-						ax.plot(xLow, fitValuesLow, '--', linewidth=lw, color='GoldenRod')
-						ax.plot(xHigh, fitValuesHigh, '--', linewidth=lw, color='GoldenRod')
+						ax.plot(x, fitValues, '--', color='mediumseagreen', linewidth=lw, label='after short distances (low)')
+						ax.plot(xLow, fitValuesLow, '--', linewidth=lw, color='mediumseagreen')
+						ax.plot(xHigh, fitValuesHigh, '--', linewidth=lw, color='mediumseagreen')
+						ax.scatter(xData, yData, color='mediumseagreen', marker='o', facecolors='none', linewidths=3, s=250)
 
 					else:
-						ax.plot(x, fitValues, color='indianred', linewidth=lw, label='after long distances (high)')
-						ax.plot(xLow, fitValuesLow, '--', linewidth=lw, color='indianred')
-						ax.plot(xHigh, fitValuesHigh, '--', linewidth=lw, color='indianred')
+						ax.plot(x, fitValues, color='midnightblue', linewidth=lw, label='after long distances (high)')
+						ax.plot(xLow, fitValuesLow, linewidth=lw, color='midnightblue')
+						ax.plot(xHigh, fitValuesHigh, linewidth=lw, color='midnightblue')
+						ax.scatter(xData, yData, edgecolors='midnightblue', marker='o', facecolors='none', linewidths=3, s=250)
 
 					# threshhold x
 					x = [fit[0], fit[0]]
-					y = [0, .5]
+					y = [-0.05, .5]
 					ax.plot(x, y, '-', c='slategrey', linestyle='--')
 
-				ax.set_ylim([0, 1.05])
+				ax.set_ylim([-0.05, 1.05])
 				ax.set_xlim([0.25, 1.75])
 				ax.spines['top'].set_visible(False)
 				ax.spines['right'].set_visible(False)
-				ax.set_xlabel('Normalized comparison value')
-				ax.set_ylabel('p(M)')
-				plt.legend(loc='top left', ncol=1, fontsize=24)
+				ax.tick_params(labelleft=False,
+				            labelbottom=False)
+				ax.grid(which='major', axis='y', linestyle='--', c='slategrey', linewidth=.5)
+				#ax.set_xlabel('Normalized comparison value')
+				#ax.set_ylabel('p(M)')
+				#plt.legend(loc='top left', ncol=1, fontsize=24)
 
-				ax.annotate('PSE difference={:.3f}'.format(pse_data_irrel[1][0] - pse_data_irrel[0][0]), (1.18, 0.25), fontsize=26, color='slategray')
-				fig.savefig(opj('/Users/jachtzehn/Documents/Medizin/thesis/figures/results/behavioural', 'corrDim-rel-{}-irell-{}.pdf'.format(condition_rel, condition_irrel)), dpi=300)
+				#ax.annotate('PSE difference={:.3f}'.format(pse_data_irrel[1][0] - pse_data_irrel[0][0]), (1.18, 0.25), fontsize=26, color='slategray')
+				fig.savefig(opj(output_dir, 'corrDim-rel-{}-irell-{}.pdf'.format(condition_rel, condition_irrel)), dpi=300)
 				plt.close()
 
 				out_data['subject'].append(subject)
